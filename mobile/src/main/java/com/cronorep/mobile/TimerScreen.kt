@@ -1,6 +1,5 @@
 package com.cronorep.mobile
 
-import android.os.Build
 import android.os.SystemClock
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -34,15 +33,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.ImageLoader
 import coil.compose.AsyncImage
-import coil.decode.GifDecoder
-import coil.decode.ImageDecoderDecoder
 import com.cronorep.BackgroundKind
 import com.cronorep.Gradient
 import com.cronorep.Look
@@ -75,6 +70,8 @@ fun TimerScreen(onTap: () -> Unit, onOpenSettings: () -> Unit) {
             .combinedClickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
+                onClickLabel = "Start rest timer",
+                onLongClickLabel = "Open settings",
                 onClick = onTap,
                 onLongClick = onOpenSettings,
             ),
@@ -181,19 +178,10 @@ private fun GradientBackground(gradient: Gradient) {
 
 @Composable
 private fun GifBackground(url: String) {
-    val context = LocalContext.current
-    val imageLoader = remember {
-        ImageLoader.Builder(context)
-            .components {
-                if (Build.VERSION.SDK_INT >= 28) add(ImageDecoderDecoder.Factory()) else add(GifDecoder.Factory())
-            }
-            .crossfade(true)
-            .build()
-    }
+    // The app-wide loader from CronoRepApp plays the GIF.
     AsyncImage(
         model = url,
         contentDescription = null,
-        imageLoader = imageLoader,
         contentScale = ContentScale.Crop,
         modifier = Modifier.fillMaxSize(),
     )

@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -26,8 +27,13 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -37,6 +43,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,6 +68,8 @@ fun SettingsScreen(onDone: () -> Unit) {
     val look = Look.settings
     // Save battery mode forces a black background, so the choices are off.
     val canChooseBackground = !look.saveBattery
+    // The GIPHY thumbnails load only when the user asks for them.
+    var showGifs by rememberSaveable { mutableStateOf(look.background == BackgroundKind.GIF_FIXED) }
 
     LaunchedEffect(Unit) { WatchLink.check(context) }
 
@@ -168,30 +179,40 @@ fun SettingsScreen(onDone: () -> Unit) {
                             .clip(CircleShape)
                             .background(Brush.verticalGradient(listOf(Color(gradient.top), Color(gradient.bottom))))
                             .border(3.dp, if (selected) Color.White else Color.Transparent, CircleShape)
-                            .clickable(enabled = canChooseBackground) {
+                            .semantics { contentDescription = gradient.name }
+                            .selectable(selected = selected, enabled = canChooseBackground, role = Role.RadioButton) {
                                 change(look.copy(background = BackgroundKind.GRADIENT, gradientId = index))
                             }
                     )
                 }
             }
         }
-        fullRow { Text("Or choose one GIF", color = Dim, fontSize = 14.sp) }
-        items(GifCatalog.IDS) { id ->
-            val selected = look.background == BackgroundKind.GIF_FIXED && look.gifId == id
-            AsyncImage(
-                model = GifCatalog.thumbUrl(id),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .aspectRatio(1f)
-                    .alpha(if (canChooseBackground) 1f else 0.35f)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Panel)
-                    .border(3.dp, if (selected) Green else Color.Transparent, RoundedCornerShape(8.dp))
-                    .clickable(enabled = canChooseBackground) {
-                        change(look.copy(background = BackgroundKind.GIF_FIXED, gifId = id))
-                    },
-            )
+        if (showGifs) {
+            items(GifCatalog.IDS, key = { it }) { id ->
+                val selected = look.background == BackgroundKind.GIF_FIXED && look.gifId == id
+                AsyncImage(
+                    model = GifCatalog.thumbUrl(id),
+                    contentDescription = "GIF ${GifCatalog.IDS.indexOf(id) + 1}",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .alpha(if (canChooseBackground) 1f else 0.35f)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Panel)
+                        .border(3.dp, if (selected) Green else Color.Transparent, RoundedCornerShape(8.dp))
+                        .selectable(selected = selected, enabled = canChooseBackground, role = Role.RadioButton) {
+                            change(look.copy(background = BackgroundKind.GIF_FIXED, gifId = id))
+                        },
+                )
+            }
+        } else {
+            fullRow {
+                Button(
+                    onClick = { showGifs = true },
+                    enabled = canChooseBackground,
+                    colors = ButtonDefaults.buttonColors(containerColor = Panel, contentColor = Color.White),
+                ) { Text("Choose a GIF") }
+            }
         }
 
         fullRow { SectionTitle("Watch") }
@@ -220,12 +241,15 @@ fun SettingsScreen(onDone: () -> Unit) {
             )
         }
         fullRow {
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     "Privacy policy",
                     color = Dim,
                     fontSize = 13.sp,
-                    modifier = Modifier.clickable { uriHandler.openUri(PRIVACY_POLICY_URL) },
+                    // At least 48 dp high, so it is easy to tap.
+                    modifier = Modifier
+                        .minimumInteractiveComponentSize()
+                        .clickable { uriHandler.openUri(PRIVACY_POLICY_URL) },
                 )
                 Text("GIFs by GIPHY", color = Dim, fontSize = 13.sp)
             }

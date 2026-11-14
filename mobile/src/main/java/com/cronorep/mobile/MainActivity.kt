@@ -31,7 +31,6 @@ class MainActivity : ComponentActivity() {
 
     /** The answer does not matter: the timer works with and without the notification. */
     private val askNotifications = registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
-    private var askedNotifications = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // The app is always dark, so the system bar icons must be light.
@@ -68,6 +67,8 @@ class MainActivity : ComponentActivity() {
                     BackHandler { showSettings = false }
                     SettingsScreen(onDone = { showSettings = false })
                 } else {
+                    // Android 8 to 11 finish the activity on Back, and that stops a running timer.
+                    BackHandler(enabled = RestTimer.startedAt != 0L) { moveTaskToBack(true) }
                     TimerScreen(
                         onTap = {
                             Trial.flush(this)
@@ -121,10 +122,18 @@ class MainActivity : ComponentActivity() {
 
     /** Android 13 and later: the "Rest timer is running" notification needs a permission. */
     private fun askForNotificationsOnce() {
-        if (Build.VERSION.SDK_INT < 33 || askedNotifications) return
-        askedNotifications = true
+        if (Build.VERSION.SDK_INT < 33) return
+        // Saved, so the question does not come back after each app start.
+        val prefs = getSharedPreferences(PREFS, MODE_PRIVATE)
+        if (prefs.getBoolean(KEY_ASKED_NOTIFICATIONS, false)) return
+        prefs.edit().putBoolean(KEY_ASKED_NOTIFICATIONS, true).apply()
         if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             askNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
+    }
+
+    private companion object {
+        const val PREFS = "cronorep"
+        const val KEY_ASKED_NOTIFICATIONS = "asked_notifications"
     }
 }

@@ -84,7 +84,7 @@ class RestTimerService : Service() {
             this, 0, packageManager.getLaunchIntentForPackage(packageName), PendingIntent.FLAG_IMMUTABLE
         )
         val notification = Notification.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher)
+            .setSmallIcon(R.drawable.ic_stat_timer)
             .setContentTitle("Rest timer is running")
             .setContentIntent(openApp)
             .setOngoing(true)

@@ -148,6 +148,45 @@ h2{font-weight:800;font-size:clamp(32px,4.2vw,52px);line-height:1.08;letter-spac
 @keyframes ring{0%{transform:scale(.45);opacity:.95}100%{transform:scale(1.9);opacity:0}}
 .frame h3{font-size:21px;font-weight:700;letter-spacing:-.01em;margin-top:18px}
 .frame p{color:var(--muted);margin-top:6px;max-width:32ch}
+/* Pinned story: the stage sticks for one screen while the page scrolls past six
+   invisible markers. The marker on the middle line of the screen picks the frame.
+   No scroll events are blocked. Without JS, with reduced motion or on a short
+   screen it stays the plain grid above. */
+.story-tabs,.story-triggers{display:none}
+.story-scroll{position:relative}
+.story-scroll.enhanced{height:420vh;height:420svh;margin-top:24px}
+.enhanced .story-pin{position:sticky;top:0;height:100vh;height:100svh;overflow:clip;background:var(--ink);transition:background-color .7s ease}
+.enhanced .story-pin::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(60% 55% at 70% 50%,var(--glow,transparent),transparent 70%);opacity:.55;transition:opacity .7s ease}
+.enhanced .story-pin[data-phase="2"],.enhanced .story-pin[data-phase="5"]{--glow:rgb(74 222 128 / .16)}
+.enhanced .story-pin[data-phase="3"]{--glow:rgb(251 146 60 / .2);background:#15110e}
+.enhanced .story-stage{position:relative;height:100%}
+.enhanced .story{display:block;position:relative;height:100%;margin:0;overflow:visible;padding:0}
+.enhanced .pic::before{display:none}
+.enhanced .frame{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:1fr auto auto 1fr;align-items:center;gap:0 64px;padding:56px 0 110px;opacity:0;visibility:hidden;transition:opacity .45s ease,visibility .45s}
+.enhanced .frame.is-active{opacity:1;visibility:visible}
+.enhanced .frame .pic{grid-column:2;grid-row:1 / -1;height:min(100%,680px);width:auto;transform:translateY(18px) scale(.97);transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.enhanced .frame.is-active .pic{transform:none}
+.enhanced .frame h3{grid-column:1;grid-row:2;font-size:clamp(34px,4.6vw,60px);line-height:1.04;letter-spacing:-.03em;margin:0}
+.enhanced .frame p{grid-column:1;grid-row:3;font-size:19px;margin-top:16px;max-width:30ch}
+.enhanced .frame h3::before{content:"0" counter(f) " / 06";display:block;font:600 14px/1 var(--digits);letter-spacing:.08em;color:var(--green);margin-bottom:18px}
+.enhanced .story-pin[data-phase="3"] .frame h3::before{color:var(--orange)}
+.enhanced .story-tabs{display:flex;position:absolute;left:50%;bottom:max(20px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:5;gap:2px;padding:5px;border:1px solid var(--line);border-radius:999px;background:rgb(23 27 33 / .92);backdrop-filter:blur(8px);box-shadow:0 12px 30px -16px #000;white-space:nowrap}
+.story-tabs button{border:0;background:transparent;color:var(--muted);font:600 13px/1 var(--sans);min-height:44px;padding:0 14px;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:7px;transition:background-color .2s,color .2s}
+.story-tabs button:hover{color:var(--text)}
+.story-tabs button:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.story-tabs button[aria-current]{background:var(--green);color:var(--green-ink)}
+.story-tabs .n{font:700 11px/1 var(--digits);opacity:.75}
+.enhanced .story-triggers{display:grid;position:absolute;inset:0;width:1px;pointer-events:none;grid-template-rows:90svh repeat(4,60svh) 90svh}
+@media (max-width:900px){
+  .enhanced .frame{grid-template-columns:1fr;grid-template-rows:auto auto auto auto;justify-items:center;align-content:center;text-align:center;gap:0;padding:20px 0 96px}
+  .enhanced .frame .pic{grid-column:1;grid-row:1;height:min(56svh,500px)}
+  .enhanced .frame h3{grid-row:2;font-size:30px;margin-top:20px}
+  .enhanced .frame h3::before{margin-bottom:10px;font-size:12px}
+  .enhanced .frame p{grid-row:3;font-size:16px;margin-top:8px}
+  .story-tabs button{padding:0 11px}
+  .story-tabs .l{display:none}
+  .story-tabs .n{font-size:13px;opacity:1}
+}
 .shot{width:min(220px,80%);aspect-ratio:1;border-radius:50%;background:var(--line);padding:9px;margin-bottom:26px}
 .shot img{width:100%;height:100%;border-radius:50%}
 
@@ -386,6 +425,10 @@ footer a:hover{color:var(--text)}
     <div class="wrap">
       <h2 data-i18n="s_h2">One tap between sets.</h2>
       <p class="h2-sub" data-i18n="s_sub">A whole bench session. He looks at his watch one time, and only for the GIF.</p>
+    </div>
+    <div class="story-scroll" id="story">
+    <div class="story-pin" data-phase="0">
+    <div class="wrap story-stage">
       <ol class="story">
         <li class="frame">
           <figure class="pic">
@@ -441,6 +484,17 @@ footer a:hover{color:var(--text)}
           <p data-i18n="f6_p">One more rest, one funny gym GIF. A new one every time.</p>
         </li>
       </ol>
+    </div>
+    <nav class="story-tabs" aria-label="Steps of the bench session" data-i18n-label="tabs_label">
+      <button type="button" data-story-step="0" aria-current="step"><span class="n">01</span><span class="l" data-i18n="t1">Sit</span></button
+      ><button type="button" data-story-step="1"><span class="n">02</span><span class="l" data-i18n="t2">Lift</span></button
+      ><button type="button" data-story-step="2"><span class="n">03</span><span class="l" data-i18n="t3">Tap</span></button
+      ><button type="button" data-story-step="3"><span class="n">04</span><span class="l" data-i18n="t4">Buzz</span></button
+      ><button type="button" data-story-step="4"><span class="n">05</span><span class="l" data-i18n="t5">Again</span></button
+      ><button type="button" data-story-step="5"><span class="n">06</span><span class="l" data-i18n="t6">Look</span></button>
+    </nav>
+    </div>
+    <div class="story-triggers" aria-hidden="true"><div data-story-trigger="0"></div><div data-story-trigger="1"></div><div data-story-trigger="2"></div><div data-story-trigger="3"></div><div data-story-trigger="4"></div><div data-story-trigger="5"></div></div>
     </div>
   </section>
 
@@ -604,6 +658,13 @@ const I18N = {
     now_looks: "Ahora mira",
     f6_h: "Ahora mira.",
     f6_p: "Un descanso más, un GIF de gimnasio divertido. Uno nuevo cada vez.",
+    tabs_label: "Pasos de la sesión de banca",
+    t1: "Siéntate",
+    t2: "Levanta",
+    t3: "Toca",
+    t4: "Vibra",
+    t5: "Otra vez",
+    t6: "Mira",
     m_h2: "Hecho para el gimnasio.",
     m1_b: "Mantén pulsado para elegir el tiempo",
     m1_s: "Cambia el descanso en pasos de 5 segundos.",
@@ -930,6 +991,46 @@ const GIFS = ["HSBsApUGF4erUp7NHV","hWddcO7xQWCqIew5rH","6uPX6ZNoCiPNxVmAUB","7k
     pre.addEventListener("error", done, { once: true });
   }
   addEventListener("load", () => setTimeout(() => { for (let i = 0; i < 4; i++) upgradeNext(); }, 1200), { once: true });
+})();
+</script>
+<script>
+/* ---- pinned bench story: the marker on the middle line of the screen picks the frame ---- */
+(() => {
+  const box = document.getElementById("story");
+  if (!box) return;
+  const pin = box.querySelector(".story-pin");
+  const frames = [...box.querySelectorAll(".frame")];
+  const tabs = [...box.querySelectorAll("[data-story-step]")];
+  const marks = [...box.querySelectorAll("[data-story-trigger]")];
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+  const room = matchMedia("(min-height: 600px)");
+  let io = null;
+  function show(i) {
+    pin.dataset.phase = String(i);
+    frames.forEach((f, k) => f.classList.toggle("is-active", k === i));
+    tabs.forEach((b, k) => k === i ? b.setAttribute("aria-current", "step") : b.removeAttribute("aria-current"));
+  }
+  function setup() {
+    io && io.disconnect();
+    box.classList.remove("enhanced");
+    frames.forEach(f => f.classList.remove("is-active"));
+    if (!("IntersectionObserver" in window) || reduce.matches || !room.matches) return;
+    box.classList.add("enhanced");
+    show(0);
+    io = new IntersectionObserver(entries => {
+      const hit = entries.filter(e => e.isIntersecting)[0];
+      if (hit) show(Number(hit.target.dataset.storyTrigger));
+    }, { rootMargin: "-49% 0px -49% 0px", threshold: 0 });
+    marks.forEach(m => io.observe(m));
+  }
+  tabs.forEach((b, i) => b.addEventListener("click", e => {
+    const el = i ? marks[i] : box;
+    const top = el.getBoundingClientRect().top + scrollY - (i ? innerHeight * 0.35 : 0);
+    scrollTo({ top, behavior: e.detail === 0 ? "instant" : "smooth" });
+  }));
+  reduce.addEventListener("change", setup);
+  room.addEventListener("change", setup);
+  setup();
 })();
 </script>
 <script type="module">

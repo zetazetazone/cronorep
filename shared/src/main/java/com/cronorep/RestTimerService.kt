@@ -16,9 +16,10 @@ import android.os.Looper
 import android.os.PowerManager
 import android.os.VibrationEffect
 import android.os.Vibrator
+import com.cronorep.shared.R
 
 /**
- * Runs during the countdown only. It holds a wake lock so the watch
+ * Runs during the countdown only. It holds a wake lock so the device
  * cannot sleep through the end of the rest time, then it vibrates and stops.
  */
 class RestTimerService : Service() {
@@ -78,8 +79,9 @@ class RestTimerService : Service() {
         manager.createNotificationChannel(
             NotificationChannel(CHANNEL_ID, "Rest timer", NotificationManager.IMPORTANCE_LOW)
         )
+        // The launch activity of this app: the watch app or the phone app.
         val openApp = PendingIntent.getActivity(
-            this, 0, Intent(this, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE
+            this, 0, packageManager.getLaunchIntentForPackage(packageName), PendingIntent.FLAG_IMMUTABLE
         )
         val notification = Notification.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher)

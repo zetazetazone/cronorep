@@ -3,7 +3,7 @@
 Package name: `com.cronorep`
 In-app product ID: `lifetime_unlock` (one-time product, 1.99 USD)
 Category: Health & Fitness
-Form factor: Wear OS (watch only)
+Form factors: Wear OS (module `app`, version code 3) and phone (module `mobile`, version code 1001)
 Privacy policy URL: https://enautomatico.online/cronorep/privacy
 
 ## App name (max 30)
@@ -16,9 +16,9 @@ Rest timer for the gym. Tap anywhere to restart. Feel the buzz when rest ends.
 
 ## Full description (max 4000)
 
-CronoRep is a rest timer made for the gym, on your Wear OS watch.
+CronoRep is a rest timer made for the gym. Use it on your Wear OS watch, on your phone, or on both.
 
-Finish your set. Tap anywhere on the screen. Rest. Your watch vibrates when the rest time ends. No small buttons, no menus, no phone.
+Finish your set. Tap anywhere on the screen. Rest. Your watch or phone vibrates when the rest time ends. No small buttons, no menus.
 
 HOW IT WORKS
 • Tap anywhere to start or restart the rest timer.
@@ -33,13 +33,16 @@ FREE TRIAL AND PRICE
 • After the 10 hours, the timer needs a one-time payment to unlock.
 • Pay one time. Use it forever. No subscription. No ads.
 
-GIF BACKGROUNDS
-• Optional animated gym GIF backgrounds from GIPHY. They are free. They need an internet connection.
+MAKE IT YOURS
+• Minimalist mode: no progress ring, only the time.
+• Save battery mode: black background and fewer screen updates.
+• Backgrounds: black, 6 colour gradients, or animated gym GIFs from GIPHY. GIFs need an internet connection.
+• Set the look in the phone app. Your watch gets the same look.
 
 PRIVACY
-• No account. No analytics. No ads. Your settings stay on your watch.
+• No account. No analytics. No ads. Your settings stay on your devices.
 
-CronoRep works alone on your watch. You do not need a phone app.
+The watch app works alone. The phone app works alone. One payment unlocks both.
 
 ## Notes for the reviewer (App content / testing instructions)
 
@@ -51,6 +54,11 @@ CronoRep works alone on your watch. You do not need a phone app.
   It stops itself when the vibration ends.
 - The free trial is 10 hours of timer use. The paywall then offers the
   one-time product `lifetime_unlock`. Use a license tester account to buy it.
+- The phone app has the same timer. Tap anywhere to start. Tap "Settings" or hold the
+  screen for the rest time and the look settings.
+- The phone app sends only the look settings to the watch app, through the Wearable
+  Data Layer. A watch is not needed to use the phone app.
+- The same one-time product `lifetime_unlock` unlocks the phone app and the watch app.
 
 ## Foreground service declaration (specialUse)
 
@@ -84,3 +92,11 @@ First version of CronoRep, the gym rest timer for your watch.
 • Optional funny gym GIF backgrounds.
 • 10 hours free. Then one payment unlocks it forever.
 </en-US>
+
+## Upload
+
+- Phone bundle (`mobile`, version code 1001 and up): the phone tracks. Closed testing with
+  12 testers for 14 days runs on this track.
+- Watch bundle (`app`, version code 3 and up): the Wear OS tracks.
+- Both bundles use the package `com.cronorep` and the same upload key.
+- The foreground service declaration (specialUse) is the same for the phone app.

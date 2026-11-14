@@ -1,7 +1,8 @@
-# CronoRep: gym rest timer for your watch
+# CronoRep: gym rest timer for your watch and phone
 
 Finish your set. Tap anywhere on the watch. Rest.
-Your wrist buzzes when the rest is over. No small buttons, no menus, no phone.
+Your wrist buzzes when the rest is over. No small buttons, no menus.
+No watch? The phone app has the same timer.
 
 <p align="center">
   <img src="docs/store/assets/wear-3-idle.png" width="200" alt="Idle screen: tap to start" />
@@ -24,13 +25,16 @@ Your wrist buzzes when the rest is over. No small buttons, no menus, no phone.
 - After that it counts up, so you see how long you go over.
 - Hold the screen to set the rest time in 5 second steps.
 - Swipe for presets: 0:30, 1:00, 1:30, 2:00.
-- Optional funny gym GIF backgrounds (GIPHY).
+- Minimalist mode, save battery mode, and backgrounds: black, colour gradients or funny gym GIFs (GIPHY).
+- The phone app sets the look for the watch too.
 
 ## Project layout
 
 | Path | What it is |
 | --- | --- |
 | `app/` | Wear OS app (Kotlin, Jetpack Compose for Wear OS) |
+| `mobile/` | Android phone app: the same timer, and look settings for the watch |
+| `shared/` | Code that the watch app and the phone app share |
 | `apple/` | Apple Watch app (SwiftUI). `project.yml` is an [XcodeGen](https://github.com/yonaskolb/XcodeGen) spec |
 | `codemagic.yaml` | Cloud build for the Apple Watch app (no Mac needed) |
 | `docs/store/` | Store listing text, privacy policy and screenshots |
@@ -40,7 +44,7 @@ Your wrist buzzes when the rest is over. No small buttons, no menus, no phone.
 **Wear OS**
 
 1. Install Android Studio and open this folder.
-2. Run the `app` configuration on a Wear OS emulator or watch.
+2. Run the `app` configuration on a Wear OS emulator or watch, or the `mobile` configuration on a phone.
 
 Debug builds never lock, so you can test everything. A release build needs your own
 upload key in `keystore/` and `keystore.properties` (both are git-ignored).

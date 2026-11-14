@@ -11,11 +11,15 @@ const { chromium } = require('playwright');
 const here = path.dirname(fileURLToPath(import.meta.url));
 const src = pathToFileURL(path.join(here, 'screens.html')).href;
 const out = path.join(here, '..', 'assets');
-const names = ['rest', 'ticks', 'go', 'idle', 'settings'];
+// 6 = paywall: the App Review screenshot for the lifetime_unlock purchase.
+const names = ['rest', 'ticks', 'go', 'idle', 'settings', 'paywall'];
+// Optional: pass shot numbers to render only those, e.g. `render.mjs 6`.
+const only = process.argv.slice(2).map(Number);
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 422, height: 514 }, deviceScaleFactor: 1 });
 for (let i = 0; i < names.length; i++) {
+  if (only.length && !only.includes(i + 1)) continue;
   await page.goto(`${src}?s=${i + 1}`, { waitUntil: 'networkidle' });
   await page.evaluate(() => document.fonts.ready);
   const file = path.join(out, `apple-watch-${i + 1}-${names[i]}.png`);

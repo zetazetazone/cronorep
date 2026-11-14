@@ -27,6 +27,8 @@ enum TrialKeychain {
     }
 
     static func write(_ value: Double) {
+        // The stored value never goes down.
+        let value = max(value, read() ?? 0)
         let data = Data(String(value).utf8)
         let update = [kSecValueData as String: data]
         let status = SecItemUpdate(baseQuery as CFDictionary, update as CFDictionary)

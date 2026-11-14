@@ -4,7 +4,7 @@ Date: 2026-11-14
 
 ## Goal
 
-Google Play asks for 12 testers for 14 days before production access. Paid testers
+Google Play asks for 12 testers for 14 days before production access. Most testers
 have phones, not watches. A phone app with the same package name (`com.cronorep`)
 and the same signing key lets phone testers count for the whole listing.
 

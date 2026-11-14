@@ -11,3 +11,5 @@ captures/
 *.keystore
 keystore.properties
 keystore/
+apple/*.xcodeproj/
+apple/Watch/Info.plist

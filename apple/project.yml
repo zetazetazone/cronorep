@@ -1,0 +1,53 @@
+# XcodeGen project. Codemagic runs "xcodegen generate" to make CronoRep.xcodeproj.
+# The app is watch-only. Apple still needs an iOS container target with no code.
+name: CronoRep
+options:
+  deploymentTarget:
+    watchOS: "10.0"
+    iOS: "17.0"
+settings:
+  base:
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.0"
+targets:
+  CronoRep:
+    type: application.watchapp2-container
+    platform: iOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.cronorep
+    dependencies:
+      - target: CronoRepWatch
+  CronoRepWatch:
+    type: application
+    platform: watchOS
+    sources:
+      - Watch
+    info:
+      path: Watch/Info.plist
+      properties:
+        CFBundleDisplayName: CronoRep
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        WKApplication: true
+        WKWatchOnly: true
+        WKCompanionAppBundleIdentifier: com.cronorep
+        # Keeps the timer alive with the wrist down.
+        WKBackgroundModes:
+          - self-care
+        ITSAppUsesNonExemptEncryption: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.cronorep.watchkitapp
+        PRODUCT_NAME: CronoRepWatch
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        TARGETED_DEVICE_FAMILY: "4"
+schemes:
+  CronoRep:
+    build:
+      targets:
+        CronoRep: all
+        CronoRepWatch: all
+    archive:
+      config: Release

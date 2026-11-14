@@ -73,3 +73,14 @@ screen is off, and show the vibration at the end.
 - The app has no account, analytics or ads SDK.
 - Google Play Billing is handled by Google.
 - GIF downloads go from the watch to GIPHY. The developer receives no data.
+
+## Release notes, version 1.0.0 (max 500 characters)
+
+<en-US>
+First version of CronoRep, the gym rest timer for your watch.
+• Tap anywhere to start or restart your rest.
+• Three soft ticks, then one long vibration when the rest ends.
+• Rest time in 5 second steps, plus quick presets.
+• Optional funny gym GIF backgrounds.
+• 10 hours free. Then one payment unlocks it forever.
+</en-US>

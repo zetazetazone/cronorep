@@ -1,0 +1,47 @@
+# Codemagic builds the Apple Watch app on a cloud Mac and sends it to TestFlight.
+#
+# Setup in Codemagic (one time):
+# 1. Team settings > Integrations > App Store Connect: add an API key named "CronoRep ASC".
+# 2. App settings > Environment variables: add CERTIFICATE_PRIVATE_KEY (secret)
+#    in a group named "apple_signing". It is an RSA private key in PEM format.
+workflows:
+  watchos-testflight:
+    name: CronoRep Apple Watch to TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    integrations:
+      app_store_connect: CronoRep ASC
+    environment:
+      groups:
+        - apple_signing
+      xcode: latest
+      vars:
+        XCODE_PROJECT: apple/CronoRep.xcodeproj
+        XCODE_SCHEME: CronoRep
+    scripts:
+      - name: Generate the Xcode project
+        script: |
+          brew install xcodegen
+          cd apple
+          xcodegen generate
+      - name: Set up code signing
+        script: |
+          keychain initialize
+          app-store-connect fetch-signing-files "com.cronorep" --type IOS_APP_STORE --create
+          app-store-connect fetch-signing-files "com.cronorep.watchkitapp" --type IOS_APP_STORE --create
+          keychain add-certificates
+          xcode-project use-profiles --project "$XCODE_PROJECT"
+      - name: Set the build number
+        script: |
+          cd apple
+          agvtool new-version -all "$PROJECT_BUILD_NUMBER"
+      - name: Build the app
+        script: |
+          xcode-project build-ipa --project "$XCODE_PROJECT" --scheme "$XCODE_SCHEME"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

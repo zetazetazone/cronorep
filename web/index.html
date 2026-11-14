@@ -496,12 +496,14 @@ function openWaitlist(p) {
 }
 document.querySelectorAll("[data-store]").forEach(a => {
   const p = a.dataset.store;
-  if (CONFIG.store[p]) {
-    // Live in the store: show the official badge, linked to the store page (Apple and Google badge rules).
+  {
+    // Official store badges. Before launch they open the waitlist (owner's choice,
+    // against Apple's and Google's badge rules); with a store link they go to the store.
     const badge = document.createElement("a");
     badge.className = "badge badge-" + p;
-    badge.href = CONFIG.store[p];
-    badge.rel = "noopener";
+    badge.href = CONFIG.store[p] || "#join";
+    if (CONFIG.store[p]) badge.rel = "noopener";
+    else badge.addEventListener("click", e => { e.preventDefault(); openWaitlist(p); });
     badge.innerHTML = p === "ios"
       ? '<img src="assets/app-store-badge.svg" alt="Download on the App Store" width="160" height="54">'
       : '<img src="assets/google-play-badge.png" alt="Get it on Google Play" width="207" height="80">';

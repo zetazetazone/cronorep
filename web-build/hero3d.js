@@ -8,6 +8,9 @@ import {
 } from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
+import { Box3, BufferAttribute } from 'three';
 
 const GREEN = '#4ade80';
 const ORANGE = '#fb923c';
@@ -43,6 +46,11 @@ class Screen {
     this.texture = new CanvasTexture(this.canvas);
     this.texture.colorSpace = SRGBColorSpace;
     this.texture.anisotropy = 4;
+    // same canvas for glTF screens (their UVs are not flipped)
+    this.glTexture = new CanvasTexture(this.canvas);
+    this.glTexture.colorSpace = SRGBColorSpace;
+    this.glTexture.anisotropy = 4;
+    this.glTexture.flipY = false;
     this.video = null;
     this.mode = 'idle';
     this.start = performance.now() + startDelay;
@@ -121,6 +129,7 @@ class Screen {
     gl.addColorStop(0.18, 'rgba(255,255,255,0)'); gl.addColorStop(0.3, 'rgba(255,255,255,0.08)'); gl.addColorStop(0.42, 'rgba(255,255,255,0)');
     ctx.fillStyle = gl; ctx.fillRect(0, 0, w, h);
     this.texture.needsUpdate = true;
+    this.glTexture.needsUpdate = true;
   }
 }
 
@@ -273,6 +282,76 @@ function squareWatch(screen) {
   return g;
 }
 
+// ---------- real models ----------
+const MODELS = {
+  galaxy: { url: 'models/galaxy.glb', screenMat: 'screen', screenSize: 1.71, hideMats: ['glass', 'mat_gray_dark'], hideMeshes: [] },
+  apple: { url: 'models/applewatch.glb', screenMat: 'Material.001', screenSize: 1.42, hideMats: ['Material.004'], hideMeshes: ['Glass', 'Cap'] },
+};
+const glass = () => glassMat();
+function styleGalaxy(m) {
+  const n = m.name;
+  const metal = (color, rough) => new MeshStandardMaterial({ color, metalness: 1, roughness: rough });
+  if (n === 'metal_black' || n.startsWith('metal_sapphire_blue') || n === 'chrome_sapphire_blue') return metal(0x3a3e45, 0.32);
+  if (n === 'chrome' || n === 'chrome_flash') return metal(0xc9cdd3, 0.18);
+  if (n === 'silicon_sapphire_blue') return new MeshPhysicalMaterial({ color: 0x1c1f24, roughness: 0.55, clearcoat: 0.3, clearcoatRoughness: 0.5, envMapIntensity: 0.6 });
+  if (n === 'glass') return glass();
+  if (n === 'text_gray') return new MeshStandardMaterial({ color: 0x9aa0a8, roughness: 0.5, metalness: 0.2 });
+  if (n === 'mat_gray_dark') return new MeshStandardMaterial({ color: 0x15171a, roughness: 0.35, metalness: 0.6 });
+  if (n === 'mat_black' || n === 'metal_black_screw') return new MeshStandardMaterial({ color: 0x0b0c0e, roughness: 0.6 });
+  return null;
+}
+function styleApple(m) {
+  const n = m.name;
+  if (n === 'Material.008') return new MeshStandardMaterial({ color: 0x2a3038, metalness: 0.9, roughness: 0.32 });
+  if (n === 'Material.003') return new MeshPhysicalMaterial({ color: 0x166a3a, roughness: 0.55, clearcoat: 0.3, clearcoatRoughness: 0.5, envMapIntensity: 0.55 });
+  if (n === 'Material.004') return glass();
+  if (n === 'Black Glossy' || n === 'Black Glossy2') return new MeshStandardMaterial({ color: 0x030304, roughness: 0.12, metalness: 0 });
+  return null;
+}
+// The screen meshes have no usable UVs. They are flat in local XY, so map x,y straight to u,v.
+function planarUV(geo) {
+  const p = geo.attributes.position;
+  let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+  for (let i = 0; i < p.count; i++) { const x = p.getX(i), y = p.getY(i); x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+  const uv = new Float32Array(p.count * 2);
+  for (let i = 0; i < p.count; i++) { uv[i * 2] = (p.getX(i) - x0) / (x1 - x0); uv[i * 2 + 1] = (p.getY(i) - y0) / (y1 - y0); }
+  geo.setAttribute('uv', new BufferAttribute(uv, 2));
+}
+async function loadModels(sRound, sSquare) {
+  const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+  const prep = async (cfg, screen, style) => {
+    const gltf = await loader.loadAsync(cfg.url);
+    const root = gltf.scene;
+    let scr = null;
+    root.traverse((o) => {
+      if (!o.isMesh) return;
+      // the models' own front glass and covers would hide the screen; the screen draws its own glass stripe
+      if (cfg.hideMats.includes(o.material.name) || cfg.hideMeshes.includes(o.name)) { o.visible = false; return; }
+      if (o.material.name === cfg.screenMat) {
+        planarUV(o.geometry);
+        o.material = new MeshBasicMaterial({ map: screen.texture, toneMapped: false });
+        scr = o;
+      } else {
+        const mm = style(o.material);
+        if (mm) o.material = mm;
+        o.material.side = DoubleSide; // the FBX import has mirrored faces
+      }
+    });
+    if (!scr) throw new Error('no screen in ' + cfg.url);
+    root.updateMatrixWorld(true);
+    const box = new Box3().setFromObject(scr);
+    const size = Math.max(box.max.x - box.min.x, box.max.y - box.min.y);
+    const k = cfg.screenSize / size;
+    const g = new Group();
+    root.scale.setScalar(k);
+    const c = box.getCenter(new Vector3());
+    root.position.set(-c.x * k, -c.y * k, -c.z * k + 0.25);
+    g.add(root);
+    return g;
+  };
+  return Promise.all([prep(MODELS.galaxy, sRound, styleGalaxy), prep(MODELS.apple, sSquare, styleApple)]);
+}
+
 // ---------- scene ----------
 export function startHero({ canvas, gifIds, onTap }) {
   let renderer;
@@ -304,8 +383,19 @@ export function startHero({ canvas, gifIds, onTap }) {
   const sSquare = new Screen(432, 528, false, nextGif, 4600);
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const wRound = roundWatch(sRound);
-  const wSquare = squareWatch(sSquare);
+  // Real watch models (CC BY, see page footer). The code-made watches are the fallback.
+  const wRound = new Group(), wSquare = new Group();
+  let modelsIn = false;
+  const fallback = setTimeout(() => {
+    if (modelsIn) return;
+    wRound.add(roundWatch(sRound)); wSquare.add(squareWatch(sSquare));
+  }, 6000);
+  loadModels(sRound, sSquare).then(([g1, g2]) => {
+    modelsIn = true; clearTimeout(fallback);
+    wRound.clear(); wSquare.clear();
+    wRound.add(g1); wSquare.add(g2);
+  }).catch((e) => { console.warn('watch models', e); });
+  if (location.hostname === 'localhost') window.__heroScene = scene; // test harness only
   const rig = new Group();
   const a = new Group(); a.add(wRound); a.position.set(-0.98, 0.1, -0.35); a.rotation.set(0.05, 0.36, 0.07);
   const b = new Group(); b.add(wSquare); b.position.set(0.98, -0.1, 0.25); b.rotation.set(-0.02, -0.42, -0.05);
@@ -327,7 +417,7 @@ export function startHero({ canvas, gifIds, onTap }) {
     renderer.setSize(wpx, hpx, false);
     camera.aspect = wpx / hpx;
     const t = Math.tan(MathUtils.degToRad(camera.fov / 2));
-    const needW = 4.15, needH = camera.aspect < 1.4 ? 4.6 : 3.7;
+    const needW = 4.0, needH = camera.aspect < 1.4 ? 3.5 : 3.4;
     camera.position.set(0, 0, Math.max(needW / 2 / (t * camera.aspect), needH / 2 / t) + 0.4);
     camera.lookAt(0, 0, 0);
     camera.updateProjectionMatrix();

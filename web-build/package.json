@@ -5,6 +5,11 @@
   "scripts": {
     "build": "esbuild hero3d.js --bundle --minify --format=esm --target=es2020 --outfile=../web/js/hero3d.js"
   },
-  "dependencies": { "three": "0.170.0" },
-  "devDependencies": { "esbuild": "^0.24.2" }
+  "dependencies": {
+    "three": "0.170.0"
+  },
+  "devDependencies": {
+    "@gltf-transform/cli": "^4.5.1",
+    "esbuild": "^0.24.2"
+  }
 }

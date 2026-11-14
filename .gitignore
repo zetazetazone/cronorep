@@ -17,3 +17,6 @@ apple/Watch/Info.plist
 # local cook run state (renders, harness deps)
 cook/
 cook-archive/
+
+# raw 3D model downloads (sources for web/models, converted by web-build/models/to_glb.py)
+/assets/

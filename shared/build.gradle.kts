@@ -11,6 +11,13 @@ android {
 
     defaultConfig {
         minSdk = 26
+        // The free trial server (trial-api/). Set in gradle.properties.
+        val trialApiUrl = providers.gradleProperty("trialApiUrl").get()
+        buildConfigField("String", "TRIAL_API_URL", "\"$trialApiUrl\"")
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     compileOptions {

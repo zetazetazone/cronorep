@@ -1,30 +1,73 @@
-# CronoRep: gym rest timer for your watch
+<div align="center">
 
-Finish your set. Tap anywhere on the watch. Rest.
-Your wrist buzzes when the rest is over. No small buttons, no menus, no phone.
+<img src="docs/store/assets/icon-512.png" width="96" alt="CronoRep icon" />
 
-<p align="center">
-  <img src="docs/store/assets/wear-3-idle.png" width="200" alt="Idle screen: tap to start" />
-  <img src="docs/store/assets/wear-1-rest.png" width="200" alt="Rest countdown" />
-  <img src="docs/store/assets/wear-2-go.png" width="200" alt="Rest over: go" />
-</p>
+# CronoRep
 
-## Get the app
+**The gym rest timer for your watch.**
+Tap anywhere. Rest. Feel the buzz.
 
-- **Wear OS:** [Google Play](https://play.google.com/store/apps/details?id=com.cronorep) (the link works when the listing is live)
-- **Apple Watch:** coming soon to the App Store
+[**🌐 Website**](https://enautomatico.online/cronorep/) ·
+[**⌚ Join the waitlist**](https://enautomatico.online/cronorep/) ·
+[**🔒 Privacy**](https://enautomatico.online/cronorep/privacy)
 
-10 hours free. Then one payment of $1.99 unlocks it forever. No subscription, no ads, no account.
+![Wear OS](https://img.shields.io/badge/Wear_OS-4ade80?style=for-the-badge&logo=wearos&logoColor=black)
+![Apple Watch](https://img.shields.io/badge/Apple_Watch-white?style=for-the-badge&logo=apple&logoColor=black)
+![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)
+![Swift](https://img.shields.io/badge/Swift-F05138?style=for-the-badge&logo=swift&logoColor=white)
+![License: MIT](https://img.shields.io/badge/License-MIT-fb923c?style=for-the-badge)
+
+<img src="docs/readme/demo.gif" width="320" alt="CronoRep demo: tap to start, rest countdown, three ticks, one long buzz, then GO" />
+
+</div>
+
+## Why
+
+Between sets you want one thing: know when to go again.
+Phone timers need unlocking, small buttons and your attention.
+CronoRep needs **one tap anywhere on the watch**. Your wrist tells you when to lift.
 
 ## What it does
 
-- Tap anywhere to start or restart the rest timer.
-- Three soft ticks in the last 3 seconds.
-- One long vibration when the rest ends, also with your wrist down.
-- After that it counts up, so you see how long you go over.
-- Hold the screen to set the rest time in 5 second steps.
-- Swipe for presets: 0:30, 1:00, 1:30, 2:00.
-- Optional funny gym GIF backgrounds (GIPHY).
+| | |
+| --- | --- |
+| 👆 **Tap anywhere** | Start or restart the rest. No small buttons. |
+| ⏱️ **3 soft ticks** | A warning in the last 3 seconds. |
+| 📳 **One long buzz** | Rest is over, also with your wrist down. |
+| ➕ **Counts up after** | See how long you go over. |
+| ✋ **Hold to set time** | Change the rest in 5 second steps. |
+| 🔢 **Presets** | Swipe for 0:30, 1:00, 1:30 and 2:00. |
+| 🎞️ **Gym GIFs** | Optional funny GIF behind the timer. A new one each rest. |
+| 🚫 **No phone, no ads, no account** | It works alone on your watch. |
+
+<div align="center">
+<img src="docs/store/assets/wear-3-idle.png" width="180" alt="Idle: tap to start" />
+<img src="docs/store/assets/wear-1-rest.png" width="180" alt="Rest countdown" />
+<img src="docs/store/assets/wear-2-go.png" width="180" alt="Rest over: go" />
+<img src="docs/store/assets/wear-5-presets.png" width="180" alt="Presets" />
+</div>
+
+## Gym GIF backgrounds
+
+Turn on **GIF** in the settings and every rest gets a new gym GIF.
+
+<div align="center">
+<img src="https://media.giphy.com/media/HSBsApUGF4erUp7NHV/200.gif" height="140" alt="Gym GIF" />
+<img src="https://media.giphy.com/media/hWddcO7xQWCqIew5rH/200.gif" height="140" alt="Gym GIF" />
+<img src="https://media.giphy.com/media/6uPX6ZNoCiPNxVmAUB/200.gif" height="140" alt="Gym GIF" />
+<img src="https://media.giphy.com/media/7kbEhOfZzxNPTerRRz/200.gif" height="140" alt="Gym GIF" />
+<br /><sub>GIFs powered by GIPHY</sub>
+</div>
+
+## Get the app
+
+<a href="https://enautomatico.online/cronorep/"><img src="docs/readme/landing.jpg" alt="CronoRep website" /></a>
+
+- **Wear OS:** coming soon to Google Play
+- **Apple Watch:** coming soon to the App Store
+- **Launch day email:** [join the waitlist](https://enautomatico.online/cronorep/)
+
+10 hours free. Then one payment of $1.99 unlocks it forever. No subscription.
 
 ## Project layout
 
@@ -32,6 +75,8 @@ Your wrist buzzes when the rest is over. No small buttons, no menus, no phone.
 | --- | --- |
 | `app/` | Wear OS app (Kotlin, Jetpack Compose for Wear OS) |
 | `apple/` | Apple Watch app (SwiftUI). `project.yml` is an [XcodeGen](https://github.com/yonaskolb/XcodeGen) spec |
+| `web/` | The landing page with the 3D watch hero |
+| `waitlist-api/` | Waitlist API (Neon Function) |
 | `codemagic.yaml` | Cloud build for the Apple Watch app (no Mac needed) |
 | `docs/store/` | Store listing text, privacy policy and screenshots |
 
@@ -61,3 +106,9 @@ No account, no analytics, no ads. Settings stay on the watch.
 
 MIT. See [LICENSE](LICENSE). The name "CronoRep" and the app icon are not part of the license:
 if you publish your own build, use your own name and icon.
+
+<div align="center">
+<img src="docs/readme/end.gif" width="240" alt="CronoRep: no phone, no ads" />
+<br />
+⭐ <b>Star the repo</b> if it helps your rest.
+</div>

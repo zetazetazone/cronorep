@@ -4,7 +4,7 @@ import {
   WebGLRenderer, Scene, PerspectiveCamera, Group, Mesh, CanvasTexture, SRGBColorSpace, ACESFilmicToneMapping,
   PMREMGenerator, MeshStandardMaterial, MeshBasicMaterial, LatheGeometry, CircleGeometry, CylinderGeometry,
   BoxGeometry, ExtrudeGeometry, ShapeGeometry, Shape, Vector2, Vector3, Color, DirectionalLight, PointLight,
-  AdditiveBlending, Raycaster, MathUtils, DoubleSide,
+  AdditiveBlending, Raycaster, MathUtils, DoubleSide, MeshPhysicalMaterial,
 } from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
@@ -88,6 +88,9 @@ class Screen {
       if (el - REST > GO_HOLD) this.tap(now);
     }
     const cx = w / 2, cy = h / 2;
+    const sc = ctx.createRadialGradient(cx, cy, 0, cx, cy, S * 0.42);
+    sc.addColorStop(0, 'rgba(0,0,0,0.45)'); sc.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = sc; ctx.fillRect(0, 0, w, h);
     const rad = this.round ? S / 2 - S * 0.035 : S / 2 - S * 0.07;
     const lw = S * 0.032;
     ctx.lineCap = 'round';
@@ -106,9 +109,13 @@ class Screen {
     ctx.fillStyle = this.mode === 'go' ? ORANGE : '#fff';
     ctx.font = `300 ${Math.round(S * 0.26)}px Roboto, system-ui, sans-serif`;
     ctx.fillText(time, cx, cy + S * 0.09);
-    ctx.fillStyle = '#9aa1ab';
-    ctx.font = `400 ${Math.round(S * 0.058)}px Roboto, system-ui, sans-serif`;
+    ctx.fillStyle = '#c9ced5';
+    ctx.font = `400 ${Math.round(S * 0.064)}px Roboto, system-ui, sans-serif`;
     ctx.fillText(sub, cx, cy + S * 0.2);
+    // glass: one soft reflection stripe
+    const gl = ctx.createLinearGradient(0, 0, w, h * 0.8);
+    gl.addColorStop(0.18, 'rgba(255,255,255,0)'); gl.addColorStop(0.3, 'rgba(255,255,255,0.08)'); gl.addColorStop(0.42, 'rgba(255,255,255,0)');
+    ctx.fillStyle = gl; ctx.fillRect(0, 0, w, h);
     this.texture.needsUpdate = true;
   }
 }
@@ -121,6 +128,11 @@ function bandGeometry(width, thick, length, radius) {
   const p = g.attributes.position;
   for (let i = 0; i < p.count; i++) {
     const y = p.getY(i), z = p.getZ(i);
+    const u = y / length;
+    const tip = 0.32;
+    let sx = 1 - 0.14 * u;
+    if (y > length - tip) { const k = (y - (length - tip)) / tip; sx *= Math.max(0.18, Math.sqrt(1 - k * k)); }
+    p.setX(i, p.getX(i) * sx);
     const t = y / radius;
     p.setY(i, (radius + z) * Math.sin(t));
     p.setZ(i, -radius + (radius + z) * Math.cos(t));
@@ -131,6 +143,15 @@ function bandGeometry(width, thick, length, radius) {
   }
   g.computeVertexNormals();
   return g;
+}
+
+// A loop around the band at arc length a (on a band built by bandGeometry).
+function keeper(width, thick, radius, a, mat) {
+  const t = a / radius;
+  const m = new Mesh(new RoundedBoxGeometry(width * 0.93 + 0.07, 0.11, thick + 0.07, 3, 0.035), mat);
+  m.position.set(0, radius * Math.sin(t), -radius + radius * Math.cos(t));
+  m.rotation.x = -t;
+  return m;
 }
 
 function roundedRectShape(w, h, r) {
@@ -162,7 +183,7 @@ function roundWatch(screen) {
   const caseMat = new MeshStandardMaterial({ color: 0xc3c7ce, metalness: 1, roughness: 0.26, side: DoubleSide });
   const bezelMat = new MeshStandardMaterial({ color: 0x2a2e35, metalness: 0.85, roughness: 0.32, side: DoubleSide });
   const tickMat = new MeshStandardMaterial({ color: 0xdfe3e8, metalness: 0.6, roughness: 0.35 });
-  const bandMat = new MeshStandardMaterial({ color: 0x1b1e23, metalness: 0, roughness: 0.72, envMapIntensity: 0.5 });
+  const bandMat = new MeshPhysicalMaterial({ color: 0x1b1e23, metalness: 0, roughness: 0.55, clearcoat: 0.3, clearcoatRoughness: 0.5, envMapIntensity: 0.6 });
 
   const prof = [[0, -0.24], [0.72, -0.24], [0.9, -0.2], [1.0, -0.11], [1.05, 0.0], [1.05, 0.1], [1.02, 0.17], [0.99, 0.19]];
   const caseGeo = new LatheGeometry(prof.map(([x, y]) => new Vector2(x, y)), 96);
@@ -213,7 +234,7 @@ function squareWatch(screen) {
   const g = new Group();
   const caseMat = new MeshStandardMaterial({ color: 0x343a44, metalness: 0.95, roughness: 0.3 });
   const blackMat = new MeshStandardMaterial({ color: 0x030304, metalness: 0, roughness: 0.15 });
-  const bandMat = new MeshStandardMaterial({ color: 0x166a3a, metalness: 0, roughness: 0.66, envMapIntensity: 0.45 });
+  const bandMat = new MeshPhysicalMaterial({ color: 0x166a3a, metalness: 0, roughness: 0.55, clearcoat: 0.3, clearcoatRoughness: 0.5, envMapIntensity: 0.55 });
 
   const W = 1.62, H = 1.98;
   const caseGeo = new ExtrudeGeometry(roundedRectShape(W - 0.2, H - 0.2, 0.34), {
@@ -268,8 +289,8 @@ export function startHero({ canvas, gifIds, onTap }) {
 
   const camera = new PerspectiveCamera(26, 1, 0.1, 100);
   const key = new DirectionalLight(0xffffff, 2.2); key.position.set(-3, 4, 5); scene.add(key);
-  const rimA = new PointLight(GREEN, 10, 12); rimA.position.set(-3.2, 1.2, -1.5); scene.add(rimA);
-  const rimB = new PointLight(GREEN, 10, 12); rimB.position.set(3.2, -0.8, -1.5); scene.add(rimB);
+  const rimA = new PointLight(GREEN, 9, 14); rimA.position.set(-3.4, 1.4, -3); scene.add(rimA);
+  const rimB = new PointLight(GREEN, 9, 14); rimB.position.set(3.4, -0.8, -3); scene.add(rimB);
 
   let gi = 0;
   const order = gifIds.slice().sort(() => Math.random() - 0.5);
@@ -282,8 +303,8 @@ export function startHero({ canvas, gifIds, onTap }) {
   const wRound = roundWatch(sRound);
   const wSquare = squareWatch(sSquare);
   const rig = new Group();
-  const a = new Group(); a.add(wRound); a.position.set(-1.12, 0.12, -0.35); a.rotation.set(0.05, 0.36, 0.07);
-  const b = new Group(); b.add(wSquare); b.position.set(1.12, -0.12, 0.25); b.rotation.set(-0.02, -0.32, -0.05);
+  const a = new Group(); a.add(wRound); a.position.set(-0.98, 0.1, -0.35); a.rotation.set(0.05, 0.36, 0.07);
+  const b = new Group(); b.add(wSquare); b.position.set(0.98, -0.1, 0.25); b.rotation.set(-0.02, -0.42, -0.05);
   rig.add(a, b);
   scene.add(rig);
 
@@ -302,7 +323,7 @@ export function startHero({ canvas, gifIds, onTap }) {
     renderer.setSize(wpx, hpx, false);
     camera.aspect = wpx / hpx;
     const t = Math.tan(MathUtils.degToRad(camera.fov / 2));
-    const needW = 5.0, needH = 4.3;
+    const needW = 4.15, needH = camera.aspect < 1.4 ? 4.6 : 3.7;
     camera.position.set(0, 0, Math.max(needW / 2 / (t * camera.aspect), needH / 2 / t) + 0.4);
     camera.lookAt(0, 0, 0);
     camera.updateProjectionMatrix();

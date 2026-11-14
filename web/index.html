@@ -206,21 +206,28 @@ footer a:hover{color:var(--text)}
 .gw-col{display:grid;gap:14px;align-content:start;animation:drift var(--d,46s) ease-in-out infinite alternate}
 .gw-col:nth-child(even){animation-direction:alternate-reverse}
 @keyframes drift{from{transform:translateY(0)}to{transform:translateY(-34%)}}
-.gw video{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;background:#1a1f26;filter:saturate(1.05) brightness(.9)}
+.gw video{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;background:#1a1f26;filter:saturate(1.15) brightness(.95)}
 .shade{position:absolute;inset:0;z-index:-1;pointer-events:none;background:
-  linear-gradient(90deg,rgb(17 20 24 / .94) 0%,rgb(17 20 24 / .86) 38%,rgb(17 20 24 / .58) 70%,rgb(17 20 24 / .7) 100%),
+  linear-gradient(90deg,rgb(17 20 24 / .93) 0%,rgb(17 20 24 / .9) 36%,rgb(17 20 24 / .45) 62%,rgb(17 20 24 / .32) 100%),
   linear-gradient(180deg,rgb(17 20 24 / .8) 0%,rgb(17 20 24 / .2) 16%,transparent 30%,transparent 72%,var(--ink) 100%)}
 .giphy{position:absolute;right:16px;bottom:10px;font-size:11px;color:#6b7280;letter-spacing:.02em}
 .stage3d{position:relative;width:min(640px,100%);aspect-ratio:1/0.92}
-#hero3d{position:absolute;inset:-6% -8%;width:116%;height:112%;display:block;touch-action:pan-y}
+.stage .stage-cap{margin-top:36px;position:relative;z-index:1}
+#hero3d{position:absolute;inset:-14% -8%;width:116%;height:128%;display:block;touch-action:pan-y}
 .fallback{display:none;position:absolute;inset:0;place-items:center}
 .no3d #hero3d{display:none}
 .no3d .fallback{display:grid}
 @media (min-width:901px){.hero{grid-template-columns:.95fr 1.05fr}}
 @media (max-width:900px){
   .gw{--cols:3;transform:perspective(1000px) rotateX(18deg) rotateZ(-8deg) scale(1.15)}
-  .shade{background:linear-gradient(180deg,rgb(17 20 24 / .92) 0%,rgb(17 20 24 / .78) 30%,rgb(17 20 24 / .5) 55%,rgb(17 20 24 / .75) 82%,var(--ink) 100%)}
-  .stage3d{width:100%;aspect-ratio:1/0.95}
+  .shade{background:linear-gradient(180deg,rgb(17 20 24 / .9) 0%,rgb(17 20 24 / .72) 28%,rgb(17 20 24 / .4) 50%,rgb(17 20 24 / .85) 78%,var(--ink) 100%)}
+  .hero .stage{display:contents}
+  .hero .stage3d{order:3;margin-top:14px}
+  #hero3d{inset:0 -4%;width:108%;height:100%}
+  .hero .stage .stage-cap{margin-top:14px}
+  .hero .stage-cap{order:6;margin-top:14px;justify-content:center}
+  .hero .fine{order:5}
+  .stage3d{width:100%;aspect-ratio:1/0.82}
   .hero .stage{margin-top:8px}
 }
 @media (prefers-reduced-motion:reduce){.gw-col{animation:none}}

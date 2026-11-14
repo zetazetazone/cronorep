@@ -4,6 +4,8 @@
 
 # CronoRep
 
+🌐 **English** · [Español](README.es.md)
+
 **The gym rest timer for your watch and phone.**
 Tap anywhere. Rest. Feel the buzz.
 

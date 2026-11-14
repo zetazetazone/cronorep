@@ -13,6 +13,7 @@ No watch? The phone app has the same timer.
 ## Get the app
 
 - **Wear OS:** [Google Play](https://play.google.com/store/apps/details?id=com.cronorep) (the link works when the listing is live)
+- **Android phone:** [Google Play](https://play.google.com/store/apps/details?id=com.cronorep) (the same listing as Wear OS)
 - **Apple Watch:** coming soon to the App Store
 
 10 hours free. Then one payment of $1.99 unlocks it forever. No subscription, no ads, no account.
@@ -41,7 +42,7 @@ No watch? The phone app has the same timer.
 
 ## Build it yourself
 
-**Wear OS**
+**Android (watch and phone)**
 
 1. Install Android Studio and open this folder.
 2. Run the `app` configuration on a Wear OS emulator or watch, or the `mobile` configuration on a phone.
@@ -58,7 +59,7 @@ Without a Mac, see `codemagic.yaml`.
 
 ## Privacy
 
-No account, no analytics, no ads. Settings stay on the watch.
+No account, no analytics, no ads. Settings stay on your devices.
 [Privacy policy](https://enautomatico.online/cronorep/privacy)
 
 ## License

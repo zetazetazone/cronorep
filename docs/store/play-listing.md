@@ -25,8 +25,8 @@ HOW IT WORKS
 • Three soft ticks warn you in the last 3 seconds.
 • One long vibration tells you the rest is over, also with your wrist down.
 • After that, the timer counts up, so you see how long you go over.
-• Hold the screen to set the rest time in 5 second steps.
-• Swipe for quick presets: 0:30, 1:00, 1:30 and 2:00.
+• Set the rest time in 5 second steps.
+• Quick presets: 0:30, 1:00, 1:30 and 2:00.
 
 FREE TRIAL AND PRICE
 • You get 10 hours of timer use for free.
@@ -46,7 +46,7 @@ The watch app works alone. The phone app works alone. One payment unlocks both.
 
 ## Notes for the reviewer (App content / testing instructions)
 
-- This is a standalone Wear OS app. No login and no account.
+- The Wear OS app is standalone. The phone app works with no watch. No login and no account.
 - Tap anywhere on the main screen to start the rest timer (default 90 seconds).
 - Long-press the main screen to open the settings.
 - The foreground service (type specialUse) runs only during the countdown.
@@ -54,6 +54,7 @@ The watch app works alone. The phone app works alone. One payment unlocks both.
   It stops itself when the vibration ends.
 - The free trial is 10 hours of timer use. The paywall then offers the
   one-time product `lifetime_unlock`. Use a license tester account to buy it.
+- Testers who use more than 10 hours see the paywall. Add them as license testers.
 - The phone app has the same timer. Tap anywhere to start. Tap "Settings" or hold the
   screen for the rest time and the look settings.
 - The phone app sends only the look settings to the watch app, through the Wearable
@@ -66,21 +67,24 @@ Use case text for the Play Console form:
 
 "CronoRep is a workout rest timer. When the user taps the screen, a countdown
 starts (default 90 seconds). The foreground service runs only during this
-countdown. It keeps the countdown exact when the watch screen turns off, and it
-plays the vibration that tells the user the rest time is over. The user starts
-the task with a tap and sees an ongoing notification. The service stops itself
-right after the vibration. No other foreground service type fits a short
-user-started haptic timer."
+countdown. It keeps the countdown exact when the screen of the watch or the
+phone turns off, and it plays the vibration that tells the user the rest time
+is over. The user starts the task with a tap and sees an ongoing notification.
+The service stops itself right after the vibration. No other foreground service
+type fits a short user-started haptic timer."
 
-The form also asks for a short video: start the timer, lower the wrist so the
-screen is off, and show the vibration at the end.
+The form also asks for a short video: start the timer, let the screen turn off
+(lower the wrist on the watch, press the power button on the phone), and show the
+vibration at the end. Record one video for the phone app and one for the watch app.
 
 ## Data safety form
 
 - Does the app collect or share user data: No.
 - The app has no account, analytics or ads SDK.
 - Google Play Billing is handled by Google.
-- GIF downloads go from the watch to GIPHY. The developer receives no data.
+- GIF downloads go from the watch or the phone to GIPHY. The developer receives no data.
+- The look settings go from the phone to the user's own watch through the Wearable
+  Data Layer. They are not collected: they do not leave the user's devices.
 
 ## Release notes, version 1.0.0 (max 500 characters)
 
@@ -91,6 +95,14 @@ First version of CronoRep, the gym rest timer for your watch.
 • Rest time in 5 second steps, plus quick presets.
 • Optional funny gym GIF backgrounds.
 • 10 hours free. Then one payment unlocks it forever.
+</en-US>
+
+## Release notes, phone app version 1.0.0, version code 1001 (max 500 characters)
+
+<en-US>
+CronoRep is now on your phone.
+• The same rest timer on the phone: tap anywhere, then feel the vibration when the rest ends.
+• Set the look for your watch: minimalist mode, save battery mode and the background.
 </en-US>
 
 ## Upload

@@ -142,9 +142,10 @@ From top to bottom:
 7. A small footer: privacy policy link and "GIFs by GIPHY".
 
 Each look change is saved with `LookStore` and sent with `DataClient.putDataItem`
-(urgent). The Data Layer keeps the item and delivers it later if no watch is
-connected. A send error only changes the status line. The app does not crash and
-does not block the user. The rest time is not sent.
+(urgent). The phone keeps a "send pending" flag and sends again when a watch with
+CronoRep is reachable. The watch also reads the latest item when it starts. A send
+error only changes the status line. The app does not crash and does not block the
+user. The rest time is not sent.
 
 ### Paywall screen
 
@@ -165,7 +166,7 @@ The launcher icon is the same as the watch app icon.
 
 ## Tests
 
-- Unit tests in `:shared`: DataMap round trip, fallbacks for bad values, the
+- Unit tests in `:shared`: `toMap`/`fromMap` round trip, fallbacks for bad values, the
   `gifs_enabled` migration, and `effectiveBackground`.
 - Build check: `./gradlew :shared:testDebugUnitTest :app:assembleDebug :mobile:assembleDebug`.
 - Manual check on a phone emulator: start, restart, end vibration, settings,
@@ -178,7 +179,9 @@ The launcher icon is the same as the watch app icon.
 - Update `docs/store/play-listing.md`: CronoRep works on the watch alone and on
   the phone alone. The phone app also changes how the watch timer looks. Add the
   reviewer notes and the foreground service declaration for the phone form factor.
-- The privacy policy does not change: no data leaves the device.
+- The privacy policy is updated for the phone app: the phone sends only the look
+  settings to the user's own watch through Google Play services, and the phone app
+  contacts GIPHY when GIF backgrounds are on or the GIF chooser is open.
 - The phone bundle goes to the phone closed testing track. The watch bundle goes to
   the Wear OS track. Both use the same listing.
 - Run the app-store-compliance audit before the upload.

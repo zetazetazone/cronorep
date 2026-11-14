@@ -40,10 +40,12 @@ a new install on the same device gets the old used time back.
 `TrialSync.kt`, one object, one job: send the local used time, get the server
 value back.
 
-- `suspend fun sync(context: Context, usedMs: Long): Long?` — POST to the server,
-  return the server value, or `null` on any error (no internet, timeout, bad
-  answer). Timeout: 5 s connect, 5 s read. Runs on `Dispatchers.IO`.
-- Uses `HttpURLConnection` and `org.json`. No new library.
+- `fun sync(context: Context, platform: String, onResult: (Long) -> Unit)` — POST
+  the current `Trial.usedMs` on a background thread. On success, call `onResult`
+  with the server value on the main thread. On any error (no internet, timeout,
+  bad answer) do nothing. Timeout: 5 s connect, 5 s read.
+- Uses `HttpURLConnection` and a plain thread. No new library. The JSON is built
+  and read by small pure functions in `TrialMath.kt`, so unit tests need no Android.
 - The URL is a `BuildConfig` field (`TRIAL_API_URL`) in `shared/build.gradle.kts`.
 
 `Trial.kt` gets one new function:
@@ -51,16 +53,16 @@ value back.
 - `fun merge(context: Context, serverMs: Long)` — sets
   `usedMs = max(usedMs, serverMs)`, saves it. It never makes `usedMs` smaller.
 
-The merge rule lives in a pure function `mergeUsed(local: Long, server: Long): Long`
+The merge rule lives in a pure function `TrialMath.mergeUsed(local: Long, server: Long): Long`
 so a unit test can check it without Android.
 
 ### When the app syncs
 
 Both `MainActivity` files (`app/` and `mobile/`):
 
-- After `Trial.load(this)` in `onCreate`: launch a sync in `lifecycleScope`, then
-  `Trial.merge` with the result.
-- After `Trial.stopCounting(this)` when the app leaves the screen: launch a sync.
+- After `Trial.load(this)` in `onCreate`: start a sync, then `Trial.merge` with
+  the result.
+- After `Trial.stopCounting(this)` when the app leaves the screen: start a sync.
   The local value is already saved, so a lost sync loses nothing.
 - If the sync returns `null`, do nothing. Try again next time.
 

@@ -52,7 +52,7 @@ a{color:inherit}
 h1{font-weight:800;font-size:clamp(44px,6.4vw,84px);line-height:1.02;letter-spacing:-.03em}
 .lead{color:var(--green);font-size:clamp(20px,2.2vw,28px);font-weight:500;margin-top:18px;letter-spacing:-.01em}
 .sub{color:var(--muted);font-size:clamp(17px,1.5vw,19px);margin-top:14px;max-width:34ch}
-.stores{display:flex;gap:12px;margin-top:36px;flex-wrap:wrap}
+.stores{display:flex;gap:12px;margin-top:36px;flex-wrap:wrap;align-items:center}
 .store{position:relative;overflow:hidden;display:flex;align-items:center;gap:12px;min-width:220px;padding:12px 18px 12px 16px;border-radius:14px;border:1px solid var(--line);background:var(--ink-2);color:var(--text);text-decoration:none;cursor:pointer;font:inherit;text-align:left;transition:border-color .2s,transform .15s}
 .store:hover{border-color:#3a424e}
 .store:active{transform:scale(.98)}
@@ -166,6 +166,11 @@ dialog:has(form.ok) .dlg-head p{display:none}
 footer{border-top:1px solid var(--line);padding:32px 0 48px;color:var(--muted);font-size:14px}
 footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 footer a{text-decoration:none}
+.badge{display:inline-flex;align-items:center;height:54px;transition:transform .15s}
+.badge:active{transform:scale(.97)}
+.badge img{height:54px;width:auto;display:block}
+/* the Google PNG has clear space built in; its badge is 67% of the image height */
+.badge-android img{height:80px;margin:-13px -17px}
 footer a:hover{color:var(--text)}
 .credits{flex-basis:100%;font-size:12px;color:#6b7280;line-height:1.6}
 .credits a{text-decoration:underline}
@@ -491,9 +496,21 @@ function openWaitlist(p) {
 }
 document.querySelectorAll("[data-store]").forEach(a => {
   const p = a.dataset.store;
-  if (CONFIG.store[p]) { a.href = CONFIG.store[p]; a.rel = "noopener"; return; }
+  if (CONFIG.store[p]) {
+    // Live in the store: show the official badge, linked to the store page (Apple and Google badge rules).
+    const badge = document.createElement("a");
+    badge.className = "badge badge-" + p;
+    badge.href = CONFIG.store[p];
+    badge.rel = "noopener";
+    badge.innerHTML = p === "ios"
+      ? '<img src="assets/app-store-badge.svg" alt="Download on the App Store" width="160" height="54">'
+      : '<img src="assets/google-play-badge.png" alt="Get it on Google Play" width="207" height="80">';
+    a.replaceWith(badge);
+    return;
+  }
   a.addEventListener("click", e => { e.preventDefault(); openWaitlist(p); });
 });
+if (CONFIG.store.android && CONFIG.store.ios) { const f = document.querySelector(".hero .fine"); if (f) f.textContent = "10 hours free. Then pay once. No subscription."; }
 document.querySelectorAll("[data-open]").forEach(b => b.addEventListener("click", () => openWaitlist(b.dataset.open)));
 dlg.querySelector("[data-close]").addEventListener("click", () => dlg.close());
 dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });

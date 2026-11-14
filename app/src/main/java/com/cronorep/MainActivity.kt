@@ -57,6 +57,7 @@ class MainActivity : ComponentActivity() {
         // The screen stays on, so one tap always restarts the timer.
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         RestTimer.load(this)
+        Trial.load(this)
 
         setContent {
             MaterialTheme {
@@ -67,11 +68,24 @@ class MainActivity : ComponentActivity() {
                 } else {
                     TimerScreen(
                         onTap = ::restartTimer,
-                        onLongPress = { showSettings = true },
+                        onLongPress = {
+                            Trial.flush(this)
+                            showSettings = true
+                        },
                     )
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (RestTimer.startedAt != 0L) Trial.startCounting()
+    }
+
+    override fun onPause() {
+        Trial.stopCounting(this)
+        super.onPause()
     }
 
     override fun onDestroy() {
@@ -86,6 +100,7 @@ class MainActivity : ComponentActivity() {
         RestTimer.runSeconds = RestTimer.restSeconds
         RestTimer.startedAt = SystemClock.elapsedRealtime()
         RestTimerService.start(this, RestTimer.runSeconds * 1000L)
+        Trial.startCounting()
         // Short tick: the tap worked.
         getSystemService(Vibrator::class.java)
             .vibrate(VibrationEffect.createOneShot(40, VibrationEffect.DEFAULT_AMPLITUDE))
@@ -188,6 +203,16 @@ private fun SettingsScreen(onDone: () -> Unit) {
                         modifier = Modifier.width(90.dp).height(40.dp),
                         colors = ButtonDefaults.buttonColors(backgroundColor = Green, contentColor = Color.Black),
                     ) { Text("OK", fontWeight = FontWeight.Bold) }
+                    Spacer(Modifier.height(6.dp))
+                    Text(
+                        if (Trial.remainingMinutes > 0) {
+                            "Free trial: ${Trial.remainingText} left"
+                        } else {
+                            "Free trial ended"
+                        },
+                        color = Dim,
+                        fontSize = 11.sp,
+                    )
                 }
             } else {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

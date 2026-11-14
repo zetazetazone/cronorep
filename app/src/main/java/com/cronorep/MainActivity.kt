@@ -159,6 +159,9 @@ private fun TimerScreen(onTap: () -> Unit, onLongPress: () -> Unit) {
             ),
         contentAlignment = Alignment.Center,
     ) {
+        // Behind the idle screen and the running timer.
+        Gifs.currentUrl?.let { gifUrl -> GifBackground(gifUrl) }
+
         if (startedAt == 0L) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("TAP TO START", color = Green, fontSize = 18.sp, fontWeight = FontWeight.Bold)
@@ -171,8 +174,6 @@ private fun TimerScreen(onTap: () -> Unit, onLongPress: () -> Unit) {
             val totalMs = RestTimer.runSeconds * 1000L
             val elapsedMs = (now - startedAt).coerceAtLeast(0L)
             val resting = elapsedMs < totalMs
-
-            Gifs.currentUrl?.let { gifUrl -> GifBackground(gifUrl) }
 
             CircularProgressIndicator(
                 progress = if (resting) 1f - elapsedMs.toFloat() / totalMs else 1f,
@@ -247,29 +248,12 @@ private fun SettingsScreen(onDone: () -> Unit, onGifToggle: () -> Unit) {
                         ) { Text("+", fontSize = 26.sp) }
                     }
                     Spacer(Modifier.height(8.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Button(
-                            onClick = onGifToggle,
-                            modifier = Modifier.width(70.dp).height(40.dp),
-                            colors = if (Gifs.enabled) {
-                                ButtonDefaults.buttonColors(backgroundColor = Orange, contentColor = Color.Black)
-                            } else {
-                                ButtonDefaults.secondaryButtonColors()
-                            },
-                        ) {
-                            Text(
-                                if (Gifs.enabled) "GIF on" else "GIF off",
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Bold,
-                            )
-                        }
-                        Button(
-                            onClick = onDone,
-                            modifier = Modifier.width(70.dp).height(40.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = Green, contentColor = Color.Black),
-                        ) { Text("OK", fontWeight = FontWeight.Bold) }
-                    }
-                    Spacer(Modifier.height(6.dp))
+                    Button(
+                        onClick = onDone,
+                        modifier = Modifier.width(90.dp).height(38.dp),
+                        colors = ButtonDefaults.buttonColors(backgroundColor = Green, contentColor = Color.Black),
+                    ) { Text("OK", fontWeight = FontWeight.Bold) }
+                    Spacer(Modifier.height(5.dp))
                     Text(
                         if (Billing.unlocked) {
                             "Unlocked. Thank you!"
@@ -281,6 +265,22 @@ private fun SettingsScreen(onDone: () -> Unit, onGifToggle: () -> Unit) {
                         color = Dim,
                         fontSize = 11.sp,
                     )
+                    Spacer(Modifier.height(5.dp))
+                    Button(
+                        onClick = onGifToggle,
+                        modifier = Modifier.width(84.dp).height(30.dp),
+                        colors = if (Gifs.enabled) {
+                            ButtonDefaults.buttonColors(backgroundColor = Orange, contentColor = Color.Black)
+                        } else {
+                            ButtonDefaults.secondaryButtonColors()
+                        },
+                    ) {
+                        Text(
+                            if (Gifs.enabled) "GIF on" else "GIF off",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
                 }
             } else {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

@@ -26,7 +26,6 @@ object Gifs {
         "6uPX6ZNoCiPNxVmAUB",
         "7kbEhOfZzxNPTerRRz",
         "lOqNS2HUyN8OJV0CuF",
-        "FGiavUwla7m1ppSsnu",
         "kcEN2XhJNHtvKGEG5q",
         "H4TsgO30w3qZZeMmlL",
         "M5kXUwhern0mQ",
@@ -45,11 +44,15 @@ object Gifs {
 
     fun load(context: Context) {
         enabled = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(KEY_ENABLED, false)
+        if (enabled && currentUrl == null) showNext()
     }
 
     fun toggle(context: Context) {
         enabled = !enabled
-        if (!enabled) {
+        if (enabled) {
+            // Show a GIF at once. The user must not wait for the next tap.
+            showNext()
+        } else {
             currentId = null
             currentUrl = null
         }

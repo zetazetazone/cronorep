@@ -22,6 +22,9 @@ object Trial {
     /** SystemClock.elapsedRealtime() of the last flush. 0 = not counting. */
     private var countingSince = 0L
 
+    val expired: Boolean
+        get() = usedMs >= LIMIT_MS
+
     val remainingMinutes: Long
         get() = ((LIMIT_MS - usedMs).coerceAtLeast(0L) + 59_999L) / 60_000L
 

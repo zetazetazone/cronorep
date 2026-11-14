@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.Button
@@ -58,16 +59,26 @@ class MainActivity : ComponentActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         RestTimer.load(this)
         Trial.load(this)
+        Billing.init(this)
+        // Debug only: adb shell am start -n com.cronorep/.MainActivity --ez paywall true
+        val previewPaywall = BuildConfig.DEBUG && intent.getBooleanExtra("paywall", false)
 
         setContent {
             MaterialTheme {
                 var showSettings by rememberSaveable { mutableStateOf(false) }
-                if (showSettings) {
+                var showPaywall by rememberSaveable { mutableStateOf(previewPaywall) }
+                if (showPaywall && !Billing.unlocked) {
+                    BackHandler { showPaywall = false }
+                    PaywallScreen(onUnlock = { Billing.buy(this) })
+                } else if (showSettings) {
                     BackHandler { showSettings = false }
                     SettingsScreen(onDone = { showSettings = false })
                 } else {
                     TimerScreen(
-                        onTap = ::restartTimer,
+                        onTap = {
+                            Trial.flush(this)
+                            if (isLocked()) showPaywall = true else restartTimer()
+                        },
                         onLongPress = {
                             Trial.flush(this)
                             showSettings = true
@@ -78,8 +89,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    /** Test builds never lock, so development is not blocked. */
+    private fun isLocked() = !Billing.unlocked && Trial.expired && !BuildConfig.DEBUG
+
     override fun onResume() {
         super.onResume()
+        Billing.refresh()
         if (RestTimer.startedAt != 0L) Trial.startCounting()
     }
 
@@ -205,7 +220,9 @@ private fun SettingsScreen(onDone: () -> Unit) {
                     ) { Text("OK", fontWeight = FontWeight.Bold) }
                     Spacer(Modifier.height(6.dp))
                     Text(
-                        if (Trial.remainingMinutes > 0) {
+                        if (Billing.unlocked) {
+                            "Unlocked. Thank you!"
+                        } else if (Trial.remainingMinutes > 0) {
                             "Free trial: ${Trial.remainingText} left"
                         } else {
                             "Free trial ended"
@@ -232,6 +249,36 @@ private fun SettingsScreen(onDone: () -> Unit) {
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun PaywallScreen(onUnlock: () -> Unit) {
+    Column(
+        modifier = Modifier.fillMaxSize().background(Color.Black).padding(horizontal = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Text("Free trial ended", color = Orange, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        Spacer(Modifier.height(4.dp))
+        Text(
+            "Pay one time.\nUse it forever.",
+            color = Color.White,
+            fontSize = 14.sp,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(Modifier.height(8.dp))
+        Button(
+            onClick = onUnlock,
+            modifier = Modifier.width(150.dp).height(44.dp),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Green, contentColor = Color.Black),
+        ) {
+            Text("Unlock " + (Billing.priceText ?: ""), fontWeight = FontWeight.Bold)
+        }
+        Billing.message?.let {
+            Spacer(Modifier.height(6.dp))
+            Text(it, color = Dim, fontSize = 11.sp, textAlign = TextAlign.Center)
         }
     }
 }

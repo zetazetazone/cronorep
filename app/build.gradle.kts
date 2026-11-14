@@ -31,6 +31,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -47,4 +48,5 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.10.1")
     implementation("androidx.wear.compose:compose-material:1.4.1")
     implementation("androidx.wear.compose:compose-foundation:1.4.1")
+    implementation("com.android.billingclient:billing:8.0.0")
 }

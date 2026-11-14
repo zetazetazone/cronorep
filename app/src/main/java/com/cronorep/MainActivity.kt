@@ -322,7 +322,8 @@ private fun PaywallScreen(onUnlock: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text("Free trial ended", color = Orange, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        // The GIF button also opens this screen during the trial.
+        Text(if (Trial.expired) "Free trial ended" else "Paid feature", color = Orange, fontSize = 16.sp, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(4.dp))
         Text(
             "Pay one time.\nUse it forever.",

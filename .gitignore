@@ -24,3 +24,6 @@ cook-archive/
 # local worktrees and agent scratch files
 .worktrees/
 .superpowers/
+trial-api/node_modules/
+trial-api/dist/
+trial-api/function.zip

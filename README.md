@@ -84,6 +84,7 @@ Choose the **GIF** background in the settings and every rest gets a new gym GIF.
 | `apple/` | Apple Watch app (SwiftUI). `project.yml` is an [XcodeGen](https://github.com/yonaskolb/XcodeGen) spec |
 | `web/` | The landing page with the 3D watch hero |
 | `waitlist-api/` | Waitlist API (Neon Function) |
+| `trial-api/` | Free trial API (Neon Function): keeps the used trial time per device |
 | `codemagic.yaml` | Cloud build for the Apple Watch app (no Mac needed) |
 | `docs/store/` | Store listing text, privacy policy and screenshots |
 

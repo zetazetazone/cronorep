@@ -86,6 +86,7 @@ Elige el fondo **GIF** en los ajustes y cada descanso tiene un GIF de gimnasio n
 | `apple/` | App de Apple Watch (SwiftUI). `project.yml` es una especificación de [XcodeGen](https://github.com/yonaskolb/XcodeGen) |
 | `web/` | La web con el reloj 3D |
 | `waitlist-api/` | API de la lista de espera (Neon Function) |
+| `trial-api/` | API de la prueba gratis (Neon Function): guarda el tiempo de prueba usado por dispositivo |
 | `codemagic.yaml` | Compilación en la nube de la app de Apple Watch (sin Mac) |
 | `docs/store/` | Textos de las tiendas, política de privacidad y capturas |
 

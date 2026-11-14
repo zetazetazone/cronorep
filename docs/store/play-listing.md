@@ -79,7 +79,14 @@ vibration at the end. Record one video for the phone app and one for the watch a
 
 ## Data safety form
 
-- Does the app collect or share user data: No.
+- Does the app collect or share user data: Yes, it collects. It does not share.
+- Data type: Device or other IDs (a SHA-256 hash of ANDROID_ID).
+  - Collected, not shared. Processed: not ephemeral. Required, not optional.
+  - Purpose: Fraud prevention, security, and compliance (stops a reset of the free trial).
+- Data type: App activity → Other actions (the used free trial time).
+  - Collected, not shared. Required. Purpose: App functionality, Fraud prevention.
+- Data is encrypted in transit: Yes (HTTPS).
+- Users can ask for deletion: Yes, by email to the developer address.
 - The app has no account, analytics or ads SDK.
 - Google Play Billing is handled by Google.
 - GIF downloads go from the watch or the phone to GIPHY. The developer receives no data.

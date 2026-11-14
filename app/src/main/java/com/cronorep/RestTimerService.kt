@@ -96,7 +96,7 @@ class RestTimerService : Service() {
     }
 
     private fun vibrateRestOver() {
-        vibrate(VibrationEffect.createWaveform(longArrayOf(0, 400, 150, 400, 150, 700), -1))
+        vibrate(VibrationEffect.createOneShot(END_MS, END_AMPLITUDE))
     }
 
     private fun vibrate(effect: VibrationEffect) {
@@ -116,6 +116,8 @@ class RestTimerService : Service() {
         private const val WARNING_TICKS = 3
         private const val TICK_MS = 30L
         private const val TICK_AMPLITUDE = 70 // of 255: soft
+        private const val END_MS = 1200L
+        private const val END_AMPLITUDE = 255 // maximum
 
         fun start(context: Context, delayMs: Long) {
             context.startForegroundService(

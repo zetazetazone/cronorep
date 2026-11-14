@@ -26,6 +26,7 @@ import com.cronorep.Look
 import com.cronorep.RestTimer
 import com.cronorep.RestTimerService
 import com.cronorep.Trial
+import com.cronorep.TrialSync
 
 class MainActivity : ComponentActivity() {
 
@@ -43,6 +44,8 @@ class MainActivity : ComponentActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         RestTimer.load(this)
         Trial.load(this)
+        // A new install gets the used trial time back from the server.
+        TrialSync.sync(this, "phone") { Trial.merge(this, it) }
         Billing.init(this)
         Look.load(this)
         // Debug only: adb shell am start -n com.cronorep/com.cronorep.mobile.MainActivity --ez paywall true
@@ -97,6 +100,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onPause() {
         Trial.stopCounting(this)
+        TrialSync.sync(this, "phone") { Trial.merge(this, it) }
         super.onPause()
     }
 

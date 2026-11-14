@@ -67,6 +67,8 @@ class MainActivity : ComponentActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         RestTimer.load(this)
         Trial.load(this)
+        // A new install gets the used trial time back from the server.
+        TrialSync.sync(this, "wear") { Trial.merge(this, it) }
         Billing.init(this)
         Look.load(this)
         // The phone may have sent a look while this app was not installed or not listening.
@@ -111,6 +113,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onPause() {
         Trial.stopCounting(this)
+        TrialSync.sync(this, "wear") { Trial.merge(this, it) }
         super.onPause()
     }
 

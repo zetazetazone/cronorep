@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 rootProject.name = "cronorep"
 include(":app")
 include(":shared")
+include(":mobile")

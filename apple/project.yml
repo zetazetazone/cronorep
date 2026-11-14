@@ -32,7 +32,6 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         WKApplication: true
         WKWatchOnly: true
-        WKCompanionAppBundleIdentifier: com.cronorep
         # Keeps the timer alive with the wrist down.
         WKBackgroundModes:
           - self-care

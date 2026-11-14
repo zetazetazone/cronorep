@@ -38,8 +38,8 @@ function makeVideo(id, small) {
 
 // ---------- the screen: same drawing as the app (GIF, 55% black, ring, text) ----------
 class Screen {
-  constructor(w, h, round, nextGif, startDelay) {
-    this.w = w; this.h = h; this.round = round; this.nextGif = nextGif;
+  constructor(w, h, round, nextGif, startDelay, noGif = false) {
+    this.w = w; this.h = h; this.round = round; this.nextGif = nextGif; this.noGif = noGif;
     this.canvas = document.createElement('canvas');
     this.canvas.width = w; this.canvas.height = h;
     this.ctx = this.canvas.getContext('2d');
@@ -60,6 +60,7 @@ class Screen {
     this.swapGif();
   }
   swapGif() {
+    if (this.noGif) return; // the Apple Watch app has no GIF background
     const old = this.video;
     // first GIF small so the screen fills at once; later GIFs full size
     const v = makeVideo(this.nextGif(), !old);
@@ -293,7 +294,7 @@ function styleGalaxy(m) {
   const metal = (color, rough) => new MeshStandardMaterial({ color, metalness: 1, roughness: rough });
   if (n === 'metal_black' || n.startsWith('metal_sapphire_blue') || n === 'chrome_sapphire_blue') return metal(0x3a3e45, 0.32);
   if (n === 'chrome' || n === 'chrome_flash') return metal(0xc9cdd3, 0.18);
-  if (n === 'silicon_sapphire_blue') return new MeshPhysicalMaterial({ color: 0x1c1f24, roughness: 0.55, clearcoat: 0.3, clearcoatRoughness: 0.5, envMapIntensity: 0.6 });
+  if (n === 'silicon_sapphire_blue') return new MeshPhysicalMaterial({ color: 0x166a3a, roughness: 0.55, clearcoat: 0.3, clearcoatRoughness: 0.5, envMapIntensity: 0.6 });
   if (n === 'glass') return glass();
   if (n === 'text_gray') return new MeshStandardMaterial({ color: 0x9aa0a8, roughness: 0.5, metalness: 0.2 });
   if (n === 'mat_gray_dark') return new MeshStandardMaterial({ color: 0x15171a, roughness: 0.35, metalness: 0.6 });
@@ -303,7 +304,7 @@ function styleGalaxy(m) {
 function styleApple(m) {
   const n = m.name;
   if (n === 'Material.008') return new MeshStandardMaterial({ color: 0x2a3038, metalness: 0.9, roughness: 0.32 });
-  if (n === 'Material.003') return new MeshPhysicalMaterial({ color: 0x166a3a, roughness: 0.55, clearcoat: 0.3, clearcoatRoughness: 0.5, envMapIntensity: 0.55 });
+  if (n === 'Material.003') return new MeshPhysicalMaterial({ color: 0x0e0f11, roughness: 0.6, clearcoat: 0.25, clearcoatRoughness: 0.5, envMapIntensity: 0.35 });
   if (n === 'Material.004') return glass();
   if (n === 'Black Glossy' || n === 'Black Glossy2') return new MeshStandardMaterial({ color: 0x030304, roughness: 0.12, metalness: 0 });
   return null;
@@ -353,14 +354,14 @@ async function loadModels(sRound, sSquare) {
 }
 
 // ---------- scene ----------
-export function startHero({ canvas, gifIds, onTap }) {
+export function startHero({ canvas, stage, gifIds, onTap }) {
   let renderer;
   try {
     renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
   } catch (e) {
     return false;
   }
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
   renderer.toneMapping = ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
   renderer.outputColorSpace = SRGBColorSpace;
@@ -380,7 +381,7 @@ export function startHero({ canvas, gifIds, onTap }) {
   const nextGif = () => order[gi++ % order.length];
 
   const sRound = new Screen(512, 512, true, nextGif, 900);
-  const sSquare = new Screen(432, 528, false, nextGif, 4600);
+  const sSquare = new Screen(432, 528, false, nextGif, 4600, true);
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // Real watch models (CC BY, see page footer). The code-made watches are the fallback.
@@ -411,18 +412,26 @@ export function startHero({ canvas, gifIds, onTap }) {
     w.screen.onTick = () => { w.tickT = performance.now(); };
   }
 
+  // The canvas covers the whole top area, so a tilted watch never hits an edge.
+  // The scene is framed on the .stage3d box with a view offset.
   function resize() {
     const r = canvas.getBoundingClientRect();
     const wpx = Math.max(1, r.width), hpx = Math.max(1, r.height);
     renderer.setSize(wpx, hpx, false);
     camera.aspect = wpx / hpx;
     const t = Math.tan(MathUtils.degToRad(camera.fov / 2));
-    const needW = 4.0, needH = camera.aspect < 1.4 ? 3.5 : 3.4;
-    camera.position.set(0, 0, Math.max(needW / 2 / (t * camera.aspect), needH / 2 / t) + 0.4);
+    const sr = stage.getBoundingClientRect();
+    const sw = Math.max(1, sr.width), sh = Math.max(1, sr.height);
+    const scx = sr.left + sw / 2 - r.left, scy = sr.top + sh / 2 - r.top;
+    const small = sw < 600;
+    const needW = small ? 4.7 : 4.0, needH = small ? 4.0 : 3.4;
+    const d = Math.max(needW * hpx / (2 * t * sw), needH * hpx / (2 * t * sh)) + 0.4;
+    camera.position.set(0, 0, d);
     camera.lookAt(0, 0, 0);
+    camera.setViewOffset(wpx, hpx, wpx / 2 - scx, hpx / 2 - scy, wpx, hpx);
     camera.updateProjectionMatrix();
   }
-  new ResizeObserver(resize).observe(canvas);
+  const ro = new ResizeObserver(resize); ro.observe(canvas); ro.observe(stage);
   resize();
 
   // pointer: tilt toward the cursor, tap a watch to restart its timer
@@ -437,9 +446,11 @@ export function startHero({ canvas, gifIds, onTap }) {
   }
   window.addEventListener('pointermove', (e) => {
     target.set((e.clientX / innerWidth) * 2 - 1, (e.clientY / innerHeight) * 2 - 1);
-    if (e.pointerType === 'mouse') canvas.style.cursor = pick(e) ? 'pointer' : '';
+    if (e.pointerType === 'mouse') document.body.style.cursor = (!e.target.closest('a,button,input,label') && pick(e)) ? 'pointer' : '';
   }, { passive: true });
-  canvas.addEventListener('click', (e) => {
+  // the canvas lets clicks through to the page; a click that lands on a watch taps it
+  window.addEventListener('click', (e) => {
+    if (e.target.closest('a,button,input,label,dialog')) return;
     const w = pick(e);
     if (!w) return;
     w.screen.tap(performance.now());

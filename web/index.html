@@ -217,7 +217,8 @@ footer a:hover{color:var(--text)}
 .giphy{position:absolute;right:16px;bottom:10px;font-size:11px;color:#6b7280;letter-spacing:.02em}
 .stage3d{position:relative;width:min(640px,100%);aspect-ratio:1/0.92}
 .stage .stage-cap{margin-top:36px;position:relative;z-index:1}
-#hero3d{position:absolute;inset:-14% -8%;width:116%;height:128%;display:block;touch-action:pan-y}
+#hero3d{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;z-index:0}
+.top>.nav,.top>.hero{position:relative;z-index:1}
 .fallback{display:none;position:absolute;inset:0;place-items:center}
 .no3d #hero3d{display:none}
 .no3d .fallback{display:grid}
@@ -227,7 +228,6 @@ footer a:hover{color:var(--text)}
   .shade{background:linear-gradient(180deg,rgb(17 20 24 / .9) 0%,rgb(17 20 24 / .72) 28%,rgb(17 20 24 / .4) 50%,rgb(17 20 24 / .85) 78%,var(--ink) 100%)}
   .hero .stage{display:contents}
   .hero .stage3d{order:3;margin-top:14px}
-  #hero3d{inset:0 -4%;width:108%;height:100%}
   .hero .stage .stage-cap{margin-top:14px}
   .hero .stage-cap{order:6;margin-top:14px;justify-content:center}
   .hero .fine{order:5}
@@ -249,6 +249,7 @@ footer a:hover{color:var(--text)}
 <div class="top">
 <div class="gifwall" aria-hidden="true"><div class="gw"></div></div>
 <div class="shade" aria-hidden="true"></div>
+<canvas id="hero3d" role="img" aria-label="A round watch running CronoRep over a gym GIF, and a square watch running CronoRep on black."></canvas>
 <header class="wrap nav">
   <a class="brand" href="#top" aria-label="CronoRep home"><img src="assets/icon-512.png" alt="" width="32" height="32">CronoRep</a>
   <button class="nav-cta" type="button" data-open="both">Join the waitlist</button>
@@ -274,7 +275,6 @@ footer a:hover{color:var(--text)}
 
     <div class="stage">
       <div class="stage3d">
-      <canvas id="hero3d" role="img" aria-label="A round watch and a square watch, both running the CronoRep timer over a gym GIF."></canvas>
       <div class="fallback">
       <div class="watch-wrap">
         <div class="glow" aria-hidden="true">
@@ -605,7 +605,7 @@ const GIFS = ["HSBsApUGF4erUp7NHV","hWddcO7xQWCqIew5rH","6uPX6ZNoCiPNxVmAUB","7k
 </script>
 <script type="module">
 import { startHero } from "./js/hero3d.js";
-const ok = (() => { try { return startHero({ canvas: document.getElementById("hero3d"), gifIds: GIFS, onTap: () => { try { navigator.vibrate && navigator.vibrate(20); } catch (_) {} } }); } catch (e) { console.error(e); return false; } })();
+const ok = (() => { try { return startHero({ canvas: document.getElementById("hero3d"), stage: document.querySelector(".stage3d"), gifIds: GIFS, onTap: () => { try { navigator.vibrate && navigator.vibrate(20); } catch (_) {} } }); } catch (e) { console.error(e); return false; } })();
 if (!ok) document.documentElement.classList.add("no3d");
 </script>
 </body>

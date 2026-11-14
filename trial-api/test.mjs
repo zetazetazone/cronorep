@@ -92,3 +92,21 @@ test('limiter allows 30 posts per window, then blocks', () => {
   assert.equal(limited('ip'), true);
   assert.equal(limited('other'), false);
 });
+
+test('the limiter key is the rightmost x-forwarded-for entry', async () => {
+  let seen;
+  const h = makeHandler({ sql: fakeSql().sql, limited: (ip) => { seen = ip; return false; } });
+  await h(post({ id: ID, platform: 'wear', usedMs: 1 }, '6.6.6.6, 1.2.3.4'));
+  assert.equal(seen, '1.2.3.4');
+});
+
+test('limiter evicts the oldest key and keeps recent ones', () => {
+  const limited = makeLimiter(1, 600_000);
+  assert.equal(limited('a'), false);
+  assert.equal(limited('a'), true);
+  for (let i = 1; i <= 5001; i++) limited(`k${i}`);
+  assert.equal(limited('zzz-new'), false);
+  assert.equal(limited('k4999'), true, 'recent keys keep their count');
+  assert.equal(limited('zzz-new'), true);
+  assert.equal(limited('a'), false, 'the oldest key was evicted');
+});

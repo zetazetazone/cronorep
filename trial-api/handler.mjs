@@ -13,8 +13,11 @@ export function makeLimiter(max = 30, windowMs = 600_000) {
     const now = Date.now();
     const list = (hits.get(ip) || []).filter((t) => now - t < windowMs);
     list.push(now);
+    // Delete and set again, so an active key moves to the end of the insertion order.
+    hits.delete(ip);
     hits.set(ip, list);
-    if (hits.size > 5000) hits.clear();
+    // Drop the oldest key, never all of them.
+    if (hits.size > 5000) hits.delete(hits.keys().next().value);
     return list.length > max;
   };
 }
@@ -31,7 +34,10 @@ export function makeHandler({ sql, limited }) {
     if (request.method === 'GET') return json(200, { ok: true, service: 'cronorep-trial' });
     if (request.method !== 'POST') return json(405, { ok: false, error: 'method' });
 
-    const ip = (request.headers.get('x-forwarded-for') || '').split(',')[0].trim() || 'unknown';
+    // The platform adds the real client IP last. Earlier entries can be faked by the client.
+    const ip =
+      (request.headers.get('x-forwarded-for') || '').split(',').map((s) => s.trim()).filter(Boolean).at(-1) ||
+      'unknown';
     if (limited(ip)) return json(429, { ok: false, error: 'rate' });
 
     let data;

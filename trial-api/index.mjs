@@ -9,6 +9,7 @@ async function sql(query, params) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Neon-Connection-String': url },
     body: JSON.stringify({ query, params }),
+    signal: AbortSignal.timeout(5000),
   });
   if (!res.ok) throw new Error(`sql ${res.status}: ${(await res.text()).slice(0, 200)}`);
   return res.json();

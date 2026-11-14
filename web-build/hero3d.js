@@ -14,10 +14,13 @@ const ORANGE = '#fb923c';
 const REST = 10; // demo rest, seconds
 const GO_HOLD = 7; // seconds of GO before the demo taps again by itself
 
-const gifUrl = (id) => `https://media.giphy.com/media/${id}/200.mp4`;
+// Full-size GIPHY video (480 px) for the screens, small one on slow or data-saver connections.
+const conn = navigator.connection || {};
+const LOW_DATA = !!conn.saveData || /(^|-)2g|3g/.test(conn.effectiveType || '');
+const gifUrl = (id, small) => `https://media.giphy.com/media/${id}/${LOW_DATA || small ? '200' : 'giphy'}.mp4`;
 const fmt = (s) => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
 
-function makeVideo(id) {
+function makeVideo(id, small) {
   const v = document.createElement('video');
   v.crossOrigin = 'anonymous';
   v.muted = true;
@@ -25,7 +28,7 @@ function makeVideo(id) {
   v.playsInline = true;
   v.setAttribute('playsinline', '');
   v.preload = 'auto';
-  v.src = gifUrl(id);
+  v.src = gifUrl(id, small);
   v.play().catch(() => {});
   return v;
 }
@@ -50,7 +53,8 @@ class Screen {
   }
   swapGif() {
     const old = this.video;
-    const v = makeVideo(this.nextGif());
+    // first GIF small so the screen fills at once; later GIFs full size
+    const v = makeVideo(this.nextGif(), !old);
     v.addEventListener('loadeddata', () => { this.video = v; if (old) { old.pause(); old.removeAttribute('src'); old.load(); } }, { once: true });
     if (!old) this.video = v;
   }

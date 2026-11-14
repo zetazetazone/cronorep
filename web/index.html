@@ -573,6 +573,29 @@ const GIFS = ["HSBsApUGF4erUp7NHV","hWddcO7xQWCqIew5rH","6uPX6ZNoCiPNxVmAUB","7k
   }
   const top = document.querySelector(".top");
   new IntersectionObserver(([e]) => vids.forEach(v => e.isIntersecting ? v.play().catch(() => {}) : v.pause())).observe(top);
+
+  // Sharper wall: start with the small 200 px videos so tiles show at once,
+  // then swap each tile to the full 480 px video, a few at a time.
+  // Skipped on data saver and slow connections.
+  const conn = navigator.connection || {};
+  if (conn.saveData || /(^|-)2g|3g/.test(conn.effectiveType || "")) return;
+  const queue = vids.slice();
+  function upgradeNext() {
+    const v = queue.shift();
+    if (!v) return;
+    const hd = v.src.replace("/200.mp4", "/giphy.mp4");
+    const pre = document.createElement("video");
+    pre.muted = true; pre.playsInline = true; pre.preload = "auto"; pre.src = hd;
+    const done = () => { pre.removeAttribute("src"); pre.load(); upgradeNext(); };
+    pre.addEventListener("canplaythrough", () => {
+      const t = v.currentTime;
+      v.src = hd;
+      v.addEventListener("loadeddata", () => { try { v.currentTime = t % (v.duration || 1); } catch (_) {} v.play().catch(() => {}); }, { once: true });
+      done();
+    }, { once: true });
+    pre.addEventListener("error", done, { once: true });
+  }
+  addEventListener("load", () => setTimeout(() => { for (let i = 0; i < 4; i++) upgradeNext(); }, 1200), { once: true });
 })();
 </script>
 <script type="module">

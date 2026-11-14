@@ -4,7 +4,7 @@
 
 # CronoRep
 
-**The gym rest timer for your watch.**
+**The gym rest timer for your watch and phone.**
 Tap anywhere. Rest. Feel the buzz.
 
 [**🌐 Website**](https://enautomatico.online/cronorep/) ·
@@ -38,7 +38,9 @@ CronoRep needs **one tap anywhere on the watch**. Your wrist tells you when to l
 | ✋ **Hold to set time** | Change the rest in 5 second steps. |
 | 🔢 **Presets** | Swipe for 0:30, 1:00, 1:30 and 2:00. |
 | 🎞️ **Gym GIFs** | Optional funny GIF behind the timer. A new one each rest. |
-| 🚫 **No phone, no ads, no account** | It works alone on your watch. |
+| 🎨 **Make it yours** | Minimalist mode, save battery mode, and backgrounds: black, colour gradients or gym GIFs. |
+| 📱 **Phone app** | No watch? The phone app has the same timer. It also sets the look for the watch. |
+| 🚫 **No ads, no account** | The watch app works alone. The phone app works alone. |
 
 <div align="center">
 <img src="docs/store/assets/wear-3-idle.png" width="180" alt="Idle: tap to start" />
@@ -49,7 +51,7 @@ CronoRep needs **one tap anywhere on the watch**. Your wrist tells you when to l
 
 ## Gym GIF backgrounds
 
-Turn on **GIF** in the settings and every rest gets a new gym GIF.
+Choose the **GIF** background in the settings and every rest gets a new gym GIF.
 
 <div align="center">
 <img src="https://media.giphy.com/media/HSBsApUGF4erUp7NHV/200.gif" height="140" alt="Gym GIF" />
@@ -64,16 +66,19 @@ Turn on **GIF** in the settings and every rest gets a new gym GIF.
 <a href="https://enautomatico.online/cronorep/"><img src="docs/readme/landing.jpg" alt="CronoRep website" /></a>
 
 - **Wear OS:** coming soon to Google Play
+- **Android phone:** coming soon to Google Play (the same listing as Wear OS)
 - **Apple Watch:** coming soon to the App Store
 - **Launch day email:** [join the waitlist](https://enautomatico.online/cronorep/)
 
-10 hours free. Then one payment of $1.99 unlocks it forever. No subscription.
+10 hours free. Then one payment of $1.99 unlocks the watch app and the phone app forever. No subscription.
 
 ## Project layout
 
 | Path | What it is |
 | --- | --- |
 | `app/` | Wear OS app (Kotlin, Jetpack Compose for Wear OS) |
+| `mobile/` | Android phone app: the same timer, and look settings for the watch |
+| `shared/` | Code that the watch app and the phone app share |
 | `apple/` | Apple Watch app (SwiftUI). `project.yml` is an [XcodeGen](https://github.com/yonaskolb/XcodeGen) spec |
 | `web/` | The landing page with the 3D watch hero |
 | `waitlist-api/` | Waitlist API (Neon Function) |
@@ -82,10 +87,10 @@ Turn on **GIF** in the settings and every rest gets a new gym GIF.
 
 ## Build it yourself
 
-**Wear OS**
+**Android (watch and phone)**
 
 1. Install Android Studio and open this folder.
-2. Run the `app` configuration on a Wear OS emulator or watch.
+2. Run the `app` configuration on a Wear OS emulator or watch, or the `mobile` configuration on a phone.
 
 Debug builds never lock, so you can test everything. A release build needs your own
 upload key in `keystore/` and `keystore.properties` (both are git-ignored).
@@ -99,7 +104,7 @@ Without a Mac, see `codemagic.yaml`.
 
 ## Privacy
 
-No account, no analytics, no ads. Settings stay on the watch.
+No account, no analytics, no ads. Settings stay on your devices.
 [Privacy policy](https://enautomatico.online/cronorep/privacy)
 
 ## License

@@ -1,0 +1,4 @@
+<resources>
+    <!-- The disc colour of the watch icon. -->
+    <color name="ic_launcher_background">#101418</color>
+</resources>

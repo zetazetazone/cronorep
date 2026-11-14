@@ -41,5 +41,18 @@
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="Workout rest timer that vibrates when the rest time ends" />
         </service>
+
+        <!-- Receives the look settings from the optional phone app. -->
+        <service
+            android:name=".LookListenerService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
+                <data
+                    android:host="*"
+                    android:path="/look"
+                    android:scheme="wear" />
+            </intent-filter>
+        </service>
     </application>
 </manifest>

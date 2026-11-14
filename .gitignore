@@ -20,3 +20,7 @@ cook-archive/
 
 # raw 3D model downloads (sources for web/models, converted by web-build/models/to_glb.py)
 /assets/
+
+# local worktrees and agent scratch files
+.worktrees/
+.superpowers/

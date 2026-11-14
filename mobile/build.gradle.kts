@@ -71,6 +71,8 @@ dependencies {
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.activity:activity-compose:1.10.1")
+    // Play services pulls Fragment 1.1.0, which breaks the permission request API.
+    implementation("androidx.fragment:fragment:1.8.6")
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation("io.coil-kt:coil-gif:2.7.0")
 }

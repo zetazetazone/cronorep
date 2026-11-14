@@ -31,10 +31,12 @@ object Look {
     }
 
     private fun apply(newSettings: LookSettings) {
+        // A change that stays in random mode (for example minimalist on) keeps the GIF.
+        val wasRandom = settings.effectiveBackground == BackgroundKind.GIF_RANDOM && gifId != null
         settings = newSettings
         when (newSettings.effectiveBackground) {
-            // Show a GIF at once. The user must not wait for the next tap.
-            BackgroundKind.GIF_RANDOM -> if (gifId == null) showRandomGif()
+            // Show a GIF at once, also after a fixed GIF. The user must not wait for the next tap.
+            BackgroundKind.GIF_RANDOM -> if (!wasRandom) showRandomGif()
             BackgroundKind.GIF_FIXED -> showGif(newSettings.gifId ?: return)
             BackgroundKind.BLACK, BackgroundKind.GRADIENT -> {
                 gifId = null

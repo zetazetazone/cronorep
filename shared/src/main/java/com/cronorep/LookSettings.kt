@@ -22,6 +22,10 @@ data class LookSettings(
             else -> background
         }
 
+    /** The gradient to draw. A bad [gradientId] gives the first one, so drawing never crashes. */
+    val gradient: Gradient
+        get() = Gradients.ALL.getOrElse(gradientId) { Gradients.ALL[0] }
+
     /** For the one-button background control on the watch. */
     fun withNextBackground(): LookSettings = copy(
         background = when (background) {

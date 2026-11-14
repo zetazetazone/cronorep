@@ -37,6 +37,13 @@ class LookSettingsTest {
     }
 
     @Test
+    fun gradientFallsBackToTheFirstOne() {
+        assertEquals(Gradients.ALL[2], LookSettings(gradientId = 2).gradient)
+        assertEquals(Gradients.ALL[0], LookSettings(gradientId = 99).gradient)
+        assertEquals(Gradients.ALL[0], LookSettings(gradientId = -1).gradient)
+    }
+
+    @Test
     fun gradientOutOfRangeGivesZero() {
         assertEquals(0, LookSettings.fromRaw(null, null, "GRADIENT", 99, null).gradientId)
         assertEquals(0, LookSettings.fromRaw(null, null, "GRADIENT", -1, null).gradientId)

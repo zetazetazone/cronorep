@@ -12,15 +12,18 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,15 +37,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
-import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
-import androidx.wear.compose.material.Chip
-import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.CircularProgressIndicator
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
@@ -158,64 +156,70 @@ private fun TimerScreen(onTap: () -> Unit, onLongPress: () -> Unit) {
 @Composable
 private fun SettingsScreen(onDone: () -> Unit) {
     val context = LocalContext.current
-    // Item 0 is the +/- control. Swipe to scroll to the presets below it.
-    ScalingLazyColumn(
+    // Page 0: the +/- control. Page 1 (swipe): the preset bubbles.
+    // Each page fills the screen, so its content is always in the center.
+    VerticalPager(
+        state = rememberPagerState(pageCount = { 2 }),
         modifier = Modifier.fillMaxSize().background(Color.Black),
-        state = rememberScalingLazyListState(initialCenterItemIndex = 0),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        item {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("Rest time", color = Dim, fontSize = 13.sp)
-                Row(verticalAlignment = Alignment.CenterVertically) {
+    ) { page ->
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            if (page == 0) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("Rest time", color = Dim, fontSize = 13.sp)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Button(
+                            onClick = { RestTimer.changeRest(context, -RestTimer.STEP_SECONDS) },
+                            colors = ButtonDefaults.secondaryButtonColors(),
+                        ) { Text("-", fontSize = 26.sp) }
+                        Text(
+                            formatTime(RestTimer.restSeconds.toLong()),
+                            color = Color.White,
+                            fontSize = 34.sp,
+                            modifier = Modifier.padding(horizontal = 8.dp),
+                        )
+                        Button(
+                            onClick = { RestTimer.changeRest(context, RestTimer.STEP_SECONDS) },
+                            colors = ButtonDefaults.secondaryButtonColors(),
+                        ) { Text("+", fontSize = 26.sp) }
+                    }
+                    Spacer(Modifier.height(8.dp))
                     Button(
-                        onClick = { RestTimer.changeRest(context, -RestTimer.STEP_SECONDS) },
-                        colors = ButtonDefaults.secondaryButtonColors(),
-                    ) { Text("-", fontSize = 26.sp) }
-                    Text(
-                        formatTime(RestTimer.restSeconds.toLong()),
-                        color = Color.White,
-                        fontSize = 34.sp,
-                        modifier = Modifier.padding(horizontal = 8.dp),
-                    )
-                    Button(
-                        onClick = { RestTimer.changeRest(context, RestTimer.STEP_SECONDS) },
-                        colors = ButtonDefaults.secondaryButtonColors(),
-                    ) { Text("+", fontSize = 26.sp) }
+                        onClick = onDone,
+                        modifier = Modifier.width(90.dp).height(40.dp),
+                        colors = ButtonDefaults.buttonColors(backgroundColor = Green, contentColor = Color.Black),
+                    ) { Text("OK", fontWeight = FontWeight.Bold) }
                 }
-                Spacer(Modifier.height(8.dp))
-                Button(
-                    onClick = onDone,
-                    modifier = Modifier.width(90.dp).height(40.dp),
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Green, contentColor = Color.Black),
-                ) { Text("OK", fontWeight = FontWeight.Bold) }
-                Spacer(Modifier.height(6.dp))
-                Text("Presets below", color = Dim, fontSize = 11.sp)
+            } else {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    RestTimer.PRESETS_SECONDS.chunked(2).forEach { rowPresets ->
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            rowPresets.forEach { seconds ->
+                                PresetBubble(
+                                    seconds = seconds,
+                                    selected = seconds == RestTimer.restSeconds,
+                                    onClick = {
+                                        RestTimer.setRest(context, seconds)
+                                        onDone()
+                                    },
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
-        items(RestTimer.PRESETS_SECONDS.size) { index ->
-            val seconds = RestTimer.PRESETS_SECONDS[index]
-            val selected = seconds == RestTimer.restSeconds
-            Chip(
-                onClick = {
-                    RestTimer.setRest(context, seconds)
-                    onDone()
-                },
-                label = {
-                    Text(
-                        formatTime(seconds.toLong()),
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                },
-                colors = if (selected) {
-                    ChipDefaults.chipColors(backgroundColor = Green, contentColor = Color.Black)
-                } else {
-                    ChipDefaults.secondaryChipColors()
-                },
-                modifier = Modifier.fillMaxWidth(0.8f),
-            )
-        }
     }
+}
+
+@Composable
+private fun PresetBubble(seconds: Int, selected: Boolean, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier.size(64.dp),
+        colors = if (selected) {
+            ButtonDefaults.buttonColors(backgroundColor = Green, contentColor = Color.Black)
+        } else {
+            ButtonDefaults.secondaryButtonColors()
+        },
+    ) { Text(formatTime(seconds.toLong()), fontSize = 17.sp, fontWeight = FontWeight.Bold) }
 }

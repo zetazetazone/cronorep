@@ -14,6 +14,14 @@ targets:
   CronoRep:
     type: application.watchapp2-container
     platform: iOS
+    info:
+      path: Container/Info.plist
+      properties:
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        # App Store Connect reads this key from the container, so the
+        # export compliance question is answered for every build.
+        ITSAppUsesNonExemptEncryption: false
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.cronorep

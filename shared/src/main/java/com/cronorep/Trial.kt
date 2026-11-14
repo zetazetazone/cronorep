@@ -39,6 +39,15 @@ object Trial {
         usedMs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getLong(KEY_USED_MS, 0L)
     }
 
+    /** Takes the server value when it is bigger, for example after a new install. */
+    fun merge(context: Context, serverMs: Long) {
+        val merged = TrialMath.mergeUsed(usedMs, serverMs)
+        if (merged == usedMs) return
+        usedMs = merged
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .edit().putLong(KEY_USED_MS, usedMs).apply()
+    }
+
     fun startCounting() {
         if (countingSince == 0L) countingSince = SystemClock.elapsedRealtime()
     }

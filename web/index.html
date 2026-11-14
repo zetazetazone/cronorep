@@ -46,7 +46,7 @@ a{color:inherit}
 .nav-cta:hover{border-color:#3a424e;background:var(--ink-2)}
 
 /* hero */
-.hero{display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:48px;padding:24px 0 72px;min-height:min(calc(100svh - 72px),760px)}
+.hero{display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:48px;padding:48px 0 40px}
 h1{font-weight:800;font-size:clamp(44px,6.4vw,84px);line-height:1.02;letter-spacing:-.03em}
 .lead{color:var(--green);font-size:clamp(20px,2.2vw,28px);font-weight:500;margin-top:18px;letter-spacing:-.01em}
 .sub{color:var(--muted);font-size:clamp(17px,1.5vw,19px);margin-top:14px;max-width:34ch}
@@ -55,7 +55,7 @@ h1{font-weight:800;font-size:clamp(44px,6.4vw,84px);line-height:1.02;letter-spac
 .store:hover{border-color:#3a424e}
 .store:active{transform:scale(.98)}
 .store svg{width:26px;height:26px;flex:none}
-.store .s1{display:block;font-size:12px;color:var(--muted);line-height:1.2}
+.store .s1{display:block;font-size:13px;color:var(--muted);line-height:1.2}
 .store .s2{display:block;font-size:17px;font-weight:700;line-height:1.25}
 .store.primary{background:var(--green);border-color:var(--green);color:var(--green-ink)}
 .store.primary .s1{color:#14532d}
@@ -75,7 +75,7 @@ h1{font-weight:800;font-size:clamp(44px,6.4vw,84px);line-height:1.02;letter-spac
 .ring .track{stroke:#1f2630}
 .ring .arc{stroke:var(--accent,var(--green));stroke-linecap:round;transition:stroke .3s}
 /* glow: blurred copy of the same ring, behind the watch */
-.glow{position:absolute;inset:0;z-index:-1;transform:scale(1.08);filter:blur(34px) saturate(1.8);opacity:.42;pointer-events:none}
+.glow{position:absolute;inset:0;z-index:-1;transform:scale(1.08);filter:blur(34px) saturate(1.8);opacity:.35;pointer-events:none}
 .glow .ring .track{stroke:transparent}
 .readout{position:relative;text-align:center;font-family:var(--digits)}
 .state{font:700 clamp(18px,2.6vw,30px)/1 var(--digits);color:var(--accent,var(--green));letter-spacing:.01em;transition:color .3s}
@@ -94,7 +94,7 @@ h1{font-weight:800;font-size:clamp(44px,6.4vw,84px);line-height:1.02;letter-spac
 @keyframes pulse{50%{opacity:.25}}
 
 /* sections */
-section{padding:96px 0}
+section{padding:88px 0}
 h2{font-weight:800;font-size:clamp(32px,4.2vw,52px);line-height:1.08;letter-spacing:-.025em;max-width:22ch;text-wrap:balance}
 .h2-sub{color:var(--muted);font-size:18px;margin-top:14px;max-width:46ch}
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:56px}
@@ -126,7 +126,7 @@ h2{font-weight:800;font-size:clamp(32px,4.2vw,52px);line-height:1.08;letter-spac
 .wl{display:grid;gap:14px;text-align:left}
 .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:var(--ink);border:1px solid var(--line);border-radius:14px;padding:5px}
 .seg input{position:absolute;opacity:0;pointer-events:none}
-.seg label{display:flex;align-items:center;justify-content:center;gap:8px;padding:11px 8px;border-radius:10px;font-weight:600;font-size:15px;color:var(--muted);cursor:pointer;transition:background .2s,color .2s;user-select:none}
+.seg label{display:flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap;padding:11px 6px;border-radius:10px;font-weight:600;font-size:15px;color:var(--muted);cursor:pointer;transition:background .2s,color .2s;user-select:none}
 .seg label svg{width:18px;height:18px}
 .seg input:checked+label{background:var(--line);color:var(--text)}
 .seg input:focus-visible+label{outline:2px solid var(--green);outline-offset:1px}
@@ -134,7 +134,7 @@ h2{font-weight:800;font-size:clamp(32px,4.2vw,52px);line-height:1.08;letter-spac
 .field:focus-within{border-color:var(--green)}
 .field input{flex:1;min-width:0;background:transparent;border:0;color:var(--text);font:500 17px var(--sans);padding:10px 12px;outline:none}
 .field input::placeholder{color:#6b7280}
-.go{border:0;border-radius:10px;background:var(--green);color:var(--green-ink);font:700 16px var(--sans);padding:0 20px;cursor:pointer;white-space:nowrap;transition:filter .2s,transform .15s}
+.go{border:0;border-radius:10px;background:var(--green);color:var(--green-ink);font:700 17px var(--sans);padding:0 24px;min-height:50px;cursor:pointer;white-space:nowrap;transition:filter .2s,transform .15s}
 .go:hover{filter:brightness(1.08)}
 .go:active{transform:scale(.97)}
 .go[disabled]{opacity:.6;cursor:progress}
@@ -150,13 +150,14 @@ h2{font-weight:800;font-size:clamp(32px,4.2vw,52px);line-height:1.08;letter-spac
 .wl.ok>*:not(.done){display:none}
 .wl.ok .done{display:block}
 
-dialog{border:1px solid var(--line);background:var(--ink-2);color:var(--text);border-radius:24px;padding:28px;width:min(460px,100% - 32px);margin:auto}
+dialog{border:1px solid var(--line);background:var(--ink-2);color:var(--text);border-radius:24px;padding:28px;width:min(520px,100% - 32px);margin:auto}
 dialog::backdrop{background:rgb(5 7 9 / .72);backdrop-filter:blur(4px)}
 dialog[open]{animation:pop .22s cubic-bezier(.2,.9,.3,1.2)}
 @keyframes pop{from{opacity:0;transform:translateY(12px) scale(.98)}}
 .dlg-head{display:flex;justify-content:space-between;align-items:start;gap:16px;margin-bottom:20px}
 .dlg-head h2{font-size:26px;max-width:none}
-.dlg-head p{color:var(--muted);margin-top:6px}
+.dlg-head p{color:var(--muted);margin-top:12px}
+dialog:has(form.ok) .dlg-head p{display:none}
 .x{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;font-size:22px;line-height:1}
 .x:hover{color:var(--text)}
 
@@ -187,8 +188,11 @@ footer a:hover{color:var(--text)}
   .seg label svg{display:none}
   .seg label{font-size:14px;padding:11px 4px;white-space:nowrap}
   .nav-cta{padding:10px 14px;font-size:14px}
-  .field{flex-direction:column}
-  .go{padding:14px}
+  .field{flex-direction:column;gap:12px;background:none;border:0;padding:0}
+  .field input{background:var(--ink);border:1px solid var(--line);border-radius:14px;min-height:56px;padding:0 16px}
+  .field input:focus{border-color:var(--green)}
+  .go{min-height:56px;border-radius:14px}
+  dialog{padding:24px 20px}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
@@ -219,11 +223,11 @@ footer a:hover{color:var(--text)}
       <div class="stores">
         <a class="store primary" href="#join" data-store="android">
           <svg aria-hidden="true"><use href="#i-android"/></svg>
-          <span><span class="s1">Wear OS watch</span><span class="s2">Get it for Android</span></span>
+          <span><span class="s1">Wear OS watch · coming soon</span><span class="s2">Get it for Android</span></span>
         </a>
         <a class="store" href="#join" data-store="ios">
           <svg aria-hidden="true"><use href="#i-apple"/></svg>
-          <span><span class="s1">Apple Watch</span><span class="s2">Get it for iPhone</span></span>
+          <span><span class="s1">Apple Watch · coming soon</span><span class="s2">Get it for iPhone</span></span>
         </a>
       </div>
       <p class="fine">Launching soon. Join the waitlist and get one email on launch day.</p>

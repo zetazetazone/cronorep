@@ -55,6 +55,9 @@ private val Green = Color(0xFF4ADE80)
 private val Orange = Color(0xFFFB923C)
 private val Dim = Color(0xFF9CA3AF)
 
+/** Shown on the paywall. The same address is in the Play Console listing. */
+private const val privacyPolicyUrl = "enautomatico.online/cronorep/privacy"
+
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -328,6 +331,8 @@ private fun PaywallScreen(onUnlock: () -> Unit) {
             Spacer(Modifier.height(6.dp))
             Text(it, color = Dim, fontSize = 11.sp, textAlign = TextAlign.Center)
         }
+        Spacer(Modifier.height(6.dp))
+        Text("Privacy: $privacyPolicyUrl", color = Dim, fontSize = 8.sp, textAlign = TextAlign.Center)
     }
 }
 

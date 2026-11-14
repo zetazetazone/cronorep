@@ -4,6 +4,7 @@ Package name: `com.cronorep`
 In-app product ID: `lifetime_unlock` (one-time product, 1.99 USD)
 Category: Health & Fitness
 Form factor: Wear OS (watch only)
+Privacy policy URL: https://enautomatico.online/cronorep/privacy
 
 ## App name (max 30)
 

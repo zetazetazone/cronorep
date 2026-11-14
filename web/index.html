@@ -158,7 +158,8 @@ h2{font-weight:800;font-size:clamp(32px,4.2vw,52px);line-height:1.08;letter-spac
 .enhanced .story-pin{position:sticky;top:0;height:100vh;height:100svh;overflow:clip;background:var(--ink);transition:background-color .7s ease}
 .enhanced .story-pin::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(60% 55% at 70% 50%,var(--glow,transparent),transparent 70%);opacity:.55;transition:opacity .7s ease}
 .enhanced .story-pin[data-phase="2"],.enhanced .story-pin[data-phase="5"]{--glow:rgb(74 222 128 / .16)}
-.enhanced .story-pin[data-phase="3"]{--glow:rgb(251 146 60 / .2);background:#15110e}
+.enhanced .story-pin[data-phase="3"]{--glow:rgb(120 140 255 / .1)}
+.enhanced .story-pin[data-phase="4"]{--glow:rgb(251 146 60 / .2);background:#15110e}
 .enhanced .story-stage{position:relative;height:100%}
 .enhanced .story{display:block;position:relative;height:100%;margin:0;overflow:visible;padding:0}
 .enhanced .pic::before{display:none}
@@ -169,7 +170,7 @@ h2{font-weight:800;font-size:clamp(32px,4.2vw,52px);line-height:1.08;letter-spac
 .enhanced .frame h3{grid-column:1;grid-row:2;font-size:clamp(34px,4.6vw,60px);line-height:1.04;letter-spacing:-.03em;margin:0}
 .enhanced .frame p{grid-column:1;grid-row:3;font-size:19px;margin-top:16px;max-width:30ch}
 .enhanced .frame h3::before{content:"0" counter(f) " / 06";display:block;font:600 14px/1 var(--digits);letter-spacing:.08em;color:var(--green);margin-bottom:18px}
-.enhanced .story-pin[data-phase="3"] .frame h3::before{color:var(--orange)}
+.enhanced .story-pin[data-phase="4"] .frame h3::before{color:var(--orange)}
 .enhanced .story-tabs{display:flex;position:absolute;left:50%;bottom:max(20px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:5;gap:2px;padding:5px;border:1px solid var(--line);border-radius:999px;background:rgb(23 27 33 / .92);backdrop-filter:blur(8px);box-shadow:0 12px 30px -16px #000;white-space:nowrap}
 .story-tabs button{border:0;background:transparent;color:var(--muted);font:600 13px/1 var(--sans);min-height:44px;padding:0 14px;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:7px;transition:background-color .2s,color .2s}
 .story-tabs button:hover{color:var(--text)}
@@ -424,7 +425,7 @@ footer a:hover{color:var(--text)}
   <section>
     <div class="wrap">
       <h2 data-i18n="s_h2">One tap between sets.</h2>
-      <p class="h2-sub" data-i18n="s_sub">A whole bench session. He looks at his watch one time, and only for the GIF.</p>
+      <p class="h2-sub" data-i18n="s_sub">A whole bench session. He never has to look at his watch.</p>
     </div>
     <div class="story-scroll" id="story">
     <div class="story-pin" data-phase="0">
@@ -457,14 +458,23 @@ footer a:hover{color:var(--text)}
           <p data-i18n="f3_p">Tap anywhere on the watch. The rest starts. No small buttons.</p>
         </li>
         <li class="frame">
-          <figure class="pic" style="--x:40%;--y:70.5%">
-            <img src="assets/story-4.webp" alt="He drinks water and looks away. The watch is on his resting arm." data-i18n-alt="f4_alt" width="800" height="1000" loading="lazy">
+          <figure class="pic">
+            <img src="assets/story-4.webp" alt="He drinks water and looks away. The watch is on his resting arm." data-i18n-alt="r_alt" width="800" height="1000" loading="lazy">
+            <span class="bubble"><video src="https://media.giphy.com/media/HSBsApUGF4erUp7NHV/200.mp4" muted loop playsinline autoplay preload="none" aria-label="Watch screen: a gym GIF behind the rest timer, 0:45 left" data-i18n-label="r_gif"></video><span class="timer" aria-hidden="true"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" pathLength="100"/><circle class="arc" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="50 100"/></svg><b>REST</b><span class="t">0:45</span><small>total 0:45</small></span></span>
+            <span class="tag"><svg aria-hidden="true"><use href="#i-eye-off"/></svg><span data-i18n="not_looking">Not looking</span></span>
+          </figure>
+          <h3 data-i18n="r_h">Rest.</h3>
+          <p data-i18n="r_p">Drink, breathe, talk. The watch counts the time for you.</p>
+        </li>
+        <li class="frame">
+          <figure class="pic" style="--x:64.2%;--y:74%">
+            <img src="assets/story-buzz.webp" alt="He puts his water down and stands up. The watch is on his left wrist." data-i18n-alt="f4_alt" width="800" height="1000" loading="lazy">
             <span class="fx buzz" aria-hidden="true"><i></i><i></i><i></i></span>
             <span class="bubble"><img src="assets/wear-2-go.webp" alt="Watch screen: Go, plus 0:04" data-i18n-alt="scr_go" width="450" height="450" loading="lazy"></span>
             <span class="tag"><svg aria-hidden="true"><use href="#i-eye-off"/></svg><span data-i18n="not_looking">Not looking</span></span>
           </figure>
           <h3 data-i18n="f4_h">Feel the buzz.</h3>
-          <p data-i18n="f4_p">Three soft ticks, then one long buzz on your wrist. The rest is over.</p>
+          <p data-i18n="f4_p">Three soft ticks, then one long buzz on your wrist. Time to lift.</p>
         </li>
         <li class="frame">
           <figure class="pic">
@@ -474,24 +484,15 @@ footer a:hover{color:var(--text)}
           <h3 data-i18n="f5_h">Lift again.</h3>
           <p data-i18n="f5_p">Your wrist told you when. You did not check the time once.</p>
         </li>
-        <li class="frame">
-          <figure class="pic">
-            <img src="assets/story-6.webp" alt="He looks at his watch and laughs." data-i18n-alt="f6_alt" width="800" height="1000" loading="lazy">
-            <span class="bubble"><video src="https://media.giphy.com/media/HSBsApUGF4erUp7NHV/200.mp4" muted loop playsinline autoplay preload="none" aria-label="A funny gym GIF on the watch" data-i18n-label="f6_gif"></video><span class="timer" aria-hidden="true"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" pathLength="100"/><circle class="arc" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="30 100"/></svg><b>REST</b><span class="t">0:03</span><small>total 0:07</small></span></span>
-            <span class="tag on"><svg aria-hidden="true"><use href="#i-eye"/></svg><span data-i18n="now_looks">Now he looks</span></span>
-          </figure>
-          <h3 data-i18n="f6_h">Now look.</h3>
-          <p data-i18n="f6_p">One more rest, one funny gym GIF. A new one every time.</p>
-        </li>
       </ol>
     </div>
     <nav class="story-tabs" aria-label="Steps of the bench session" data-i18n-label="tabs_label">
       <button type="button" data-story-step="0" aria-current="step"><span class="n">01</span><span class="l" data-i18n="t1">Sit</span></button
       ><button type="button" data-story-step="1"><span class="n">02</span><span class="l" data-i18n="t2">Lift</span></button
       ><button type="button" data-story-step="2"><span class="n">03</span><span class="l" data-i18n="t3">Tap</span></button
-      ><button type="button" data-story-step="3"><span class="n">04</span><span class="l" data-i18n="t4">Buzz</span></button
-      ><button type="button" data-story-step="4"><span class="n">05</span><span class="l" data-i18n="t5">Again</span></button
-      ><button type="button" data-story-step="5"><span class="n">06</span><span class="l" data-i18n="t6">Look</span></button>
+      ><button type="button" data-story-step="3"><span class="n">04</span><span class="l" data-i18n="t4">Rest</span></button
+      ><button type="button" data-story-step="4"><span class="n">05</span><span class="l" data-i18n="t5">Buzz</span></button
+      ><button type="button" data-story-step="5"><span class="n">06</span><span class="l" data-i18n="t6">Again</span></button>
     </nav>
     </div>
     <div class="story-triggers" aria-hidden="true"><div data-story-trigger="0"></div><div data-story-trigger="1"></div><div data-story-trigger="2"></div><div data-story-trigger="3"></div><div data-story-trigger="4"></div><div data-story-trigger="5"></div></div>
@@ -633,7 +634,7 @@ const I18N = {
     demo_watch: "Reloj de demostración. Toca para empezar un descanso de 10 segundos.",
     stage_cap: "<b>Toca un reloj.</b> Nuevo descanso, nuevo GIF.",
     s_h2: "Un toque entre series.",
-    s_sub: "Una sesión entera de press de banca. Mira su reloj una sola vez, y solo por el GIF.",
+    s_sub: "Una sesión entera de press de banca. Nunca tiene que mirar su reloj.",
     f1_alt: "Un hombre sentado en un banco de press. Lleva un reloj inteligente en la muñeca izquierda.",
     scr_idle: "Pantalla del reloj: toca para empezar, 1:30",
     f1_h: "Siéntate.",
@@ -646,25 +647,24 @@ const I18N = {
     scr_rest: "Pantalla del reloj: descanso, quedan 1:30",
     f3_h: "Deja la barra. Toca.",
     f3_p: "Toca el reloj en cualquier parte. Empieza el descanso. Sin botones pequeños.",
-    f4_alt: "Bebe agua y mira hacia otro lado. El reloj está en el brazo que descansa.",
+    r_alt: "Bebe agua y mira hacia otro lado. El reloj está en el brazo que descansa.",
+    r_gif: "Pantalla del reloj: un GIF de gimnasio detrás del temporizador, quedan 0:45",
+    r_h: "Descansa.",
+    r_p: "Bebe, respira, habla. El reloj cuenta el tiempo por ti.",
+    f4_alt: "Deja el agua y se levanta. El reloj está en su muñeca izquierda.",
     scr_go: "Pantalla del reloj: ya, más 0:04",
     f4_h: "Siente la vibración.",
-    f4_p: "Tres toques suaves y luego una vibración larga en tu muñeca. El descanso terminó.",
+    f4_p: "Tres toques suaves y luego una vibración larga en tu muñeca. Hora de levantar.",
     f5_alt: "Vuelve al banco y hace la siguiente serie.",
     f5_h: "Levanta otra vez.",
     f5_p: "Tu muñeca te avisó. No miraste la hora ni una vez.",
-    f6_alt: "Mira su reloj y se ríe.",
-    f6_gif: "Un GIF divertido de gimnasio en el reloj",
-    now_looks: "Ahora mira",
-    f6_h: "Ahora mira.",
-    f6_p: "Un descanso más, un GIF de gimnasio divertido. Uno nuevo cada vez.",
     tabs_label: "Pasos de la sesión de banca",
     t1: "Siéntate",
     t2: "Levanta",
     t3: "Toca",
-    t4: "Vibra",
-    t5: "Otra vez",
-    t6: "Mira",
+    t4: "Descansa",
+    t5: "Vibra",
+    t6: "Otra vez",
     m_h2: "Hecho para el gimnasio.",
     m1_b: "Mantén pulsado para elegir el tiempo",
     m1_s: "Cambia el descanso en pasos de 5 segundos.",

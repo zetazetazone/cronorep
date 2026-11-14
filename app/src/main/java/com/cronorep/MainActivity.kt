@@ -69,6 +69,8 @@ class MainActivity : ComponentActivity() {
         Trial.load(this)
         Billing.init(this)
         Look.load(this)
+        // The phone may have sent a look while this app was not installed or not listening.
+        LookSync.fetchLatest(this)
         // Debug only: adb shell am start -n com.cronorep/.MainActivity --ez paywall true
         val previewPaywall = BuildConfig.DEBUG && intent.getBooleanExtra("paywall", false)
 

@@ -90,6 +90,8 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         Billing.refresh()
         if (RestTimer.startedAt != 0L) Trial.startCounting()
+        // A watch may have connected since the last look change: send it then.
+        WatchLink.check(this)
     }
 
     override fun onPause() {

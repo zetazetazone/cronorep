@@ -10,7 +10,7 @@ class LookListenerService : WearableListenerService() {
     override fun onDataChanged(events: DataEventBuffer) {
         for (event in events) {
             if (event.type == DataEvent.TYPE_CHANGED && event.dataItem.uri.path == LookSync.PATH) {
-                Look.update(this, LookSync.fromDataMap(DataMapItem.fromDataItem(event.dataItem).dataMap))
+                LookSync.receive(this, DataMapItem.fromDataItem(event.dataItem).dataMap)
             }
         }
     }

@@ -31,6 +31,12 @@ class LookSettingsTest {
     }
 
     @Test
+    fun unknownBackgroundNameGivesBlackAlsoWithTheOldGifSwitch() {
+        val look = LookSettings.fromRaw(null, null, "PLASMA", null, null, legacyGifsEnabled = true)
+        assertEquals(BackgroundKind.BLACK, look.background)
+    }
+
+    @Test
     fun gradientOutOfRangeGivesZero() {
         assertEquals(0, LookSettings.fromRaw(null, null, "GRADIENT", 99, null).gradientId)
         assertEquals(0, LookSettings.fromRaw(null, null, "GRADIENT", -1, null).gradientId)

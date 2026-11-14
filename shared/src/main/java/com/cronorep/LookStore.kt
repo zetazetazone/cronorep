@@ -14,6 +14,16 @@ object LookStore {
     /** The old "GIF on" switch from version 1.0.0 of the watch app. */
     private const val KEY_LEGACY_GIFS = "gifs_enabled"
 
+    /** Watch side: send time of the last look the phone sent that the watch applied. */
+    private const val KEY_SYNCED_AT = "look_synced_at"
+
+    fun syncedAt(context: Context): Long =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getLong(KEY_SYNCED_AT, 0L)
+
+    fun setSyncedAt(context: Context, sentAt: Long) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putLong(KEY_SYNCED_AT, sentAt).apply()
+    }
+
     fun load(context: Context): LookSettings {
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         return LookSettings.fromRaw(

@@ -1,0 +1,6 @@
+<resources>
+    <!-- The phone app looks for this name to know that the watch has CronoRep. Same name as LookSync.WATCH_CAPABILITY. -->
+    <string-array name="android_wear_capabilities" translatable="false">
+        <item>cronorep_watch</item>
+    </string-array>
+</resources>

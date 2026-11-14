@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cronorep.Billing
+import com.cronorep.Trial
 
 @Composable
 fun PaywallScreen(onUnlock: () -> Unit) {
@@ -51,6 +52,7 @@ fun PaywallScreen(onUnlock: () -> Unit) {
             Text(it, color = Dim, fontSize = 14.sp, textAlign = TextAlign.Center)
         }
         Spacer(Modifier.height(24.dp))
+        Text(Trial.SERVER_NOTE, color = Dim, fontSize = 13.sp, textAlign = TextAlign.Center)
         Text(
             "Privacy policy",
             color = Dim,

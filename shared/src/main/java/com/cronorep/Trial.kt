@@ -13,6 +13,13 @@ import androidx.compose.runtime.setValue
 object Trial {
     const val LIMIT_MS = 10 * 60 * 60 * 1000L
 
+    /**
+     * In-app prominent disclosure of the trial sync (Google Play User Data policy).
+     * Shown next to the trial time and on the paywall. Must match the privacy policy.
+     */
+    const val SERVER_NOTE =
+        "To keep the free trial fair, a scrambled device ID and the trial time you used are saved on our server."
+
     private const val PREFS = "cronorep"
     private const val KEY_USED_MS = "trial_used_ms"
 

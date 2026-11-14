@@ -293,6 +293,15 @@ private fun SettingsScreen(onDone: () -> Unit) {
                         color = Dim,
                         fontSize = 11.sp,
                     )
+                    if (!Billing.unlocked) {
+                        Text(
+                            Trial.SERVER_NOTE,
+                            color = Dim,
+                            fontSize = 8.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(horizontal = 24.dp),
+                        )
+                    }
                 }
             } else if (page == 1) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -386,6 +395,7 @@ private fun PaywallScreen(onUnlock: () -> Unit) {
             Text(it, color = Dim, fontSize = 11.sp, textAlign = TextAlign.Center)
         }
         Spacer(Modifier.height(6.dp))
+        Text(Trial.SERVER_NOTE, color = Dim, fontSize = 8.sp, textAlign = TextAlign.Center)
         Text("Privacy: $privacyPolicyUrl", color = Dim, fontSize = 8.sp, textAlign = TextAlign.Center)
     }
 }

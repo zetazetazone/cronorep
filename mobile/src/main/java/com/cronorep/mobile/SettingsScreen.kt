@@ -240,6 +240,9 @@ fun SettingsScreen(onDone: () -> Unit) {
                 fontSize = 14.sp,
             )
         }
+        if (!Billing.unlocked) {
+            fullRow { Text(Trial.SERVER_NOTE, color = Dim, fontSize = 13.sp) }
+        }
         fullRow {
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(

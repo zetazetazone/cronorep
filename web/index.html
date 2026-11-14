@@ -46,6 +46,26 @@ a{color:inherit}
 .brand img{width:32px;height:32px;border-radius:9px}
 .nav-cta{font:600 15px/1 var(--sans);color:var(--text);background:transparent;border:1px solid var(--line);padding:11px 16px;border-radius:999px;cursor:pointer;transition:border-color .2s,background .2s}
 .nav-cta:hover{border-color:#3a424e;background:var(--ink-2)}
+.nav-end{display:flex;align-items:center;gap:10px}
+/* language picker: pill button + dark menu */
+.lang{position:relative}
+.top>header.nav{z-index:3} /* keeps the menu above the hero */
+.lang-btn{display:inline-flex;align-items:center;gap:7px;height:39px;padding:0 11px 0 12px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--text);font:600 14px/1 var(--sans);letter-spacing:.02em;cursor:pointer;transition:border-color .2s,background .2s}
+.lang-btn:hover,.lang-btn[aria-expanded=true]{border-color:#3a424e;background:var(--ink-2)}
+.lang-btn .globe{width:17px;height:17px;flex:none;color:var(--muted)}
+.lang-btn .chev{width:12px;height:12px;flex:none;color:var(--muted);transition:transform .2s}
+.lang-btn[aria-expanded=true] .chev{transform:rotate(180deg)}
+.lang-menu{position:absolute;right:0;top:calc(100% + 8px);z-index:20;width:236px;padding:6px;border:1px solid var(--line);border-radius:16px;background:rgb(23 27 33 / .96);backdrop-filter:blur(14px);box-shadow:0 18px 48px rgb(0 0 0 / .55),0 2px 8px rgb(0 0 0 / .3);transform-origin:top right;animation:menu-in .16s cubic-bezier(.2,.9,.3,1)}
+.lang-menu[hidden]{display:none}
+@keyframes menu-in{from{opacity:0;transform:translateY(-4px) scale(.97)}}
+.lang-head{padding:8px 10px 6px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280}
+.lang-opt{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:44px;padding:8px 10px;border:0;border-radius:10px;background:transparent;color:var(--text);font:500 15px/1.25 var(--sans);text-align:left;cursor:pointer;transition:background .15s}
+.lang-opt:hover,.lang-opt:focus-visible{background:#222831;outline:none}
+.lang-opt small{display:block;margin-top:2px;font-size:12.5px;font-weight:400;color:var(--muted)}
+.lang-opt svg{width:18px;height:18px;flex:none;color:var(--green);opacity:0}
+.lang-opt[aria-checked=true]{font-weight:700}
+.lang-opt[aria-checked=true] svg{opacity:1}
+.lang-sep{height:1px;margin:4px 6px;background:var(--line)}
 
 /* hero */
 .hero{display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:48px;padding:48px 0 40px}
@@ -110,6 +130,14 @@ h2{font-weight:800;font-size:clamp(32px,4.2vw,52px);line-height:1.08;letter-spac
 .tag.on{color:var(--green-ink);background:var(--green);border-color:transparent}
 .bubble{position:absolute;right:12px;top:12px;z-index:2;width:36%;aspect-ratio:1;border-radius:50%;overflow:hidden;background:#000;border:5px solid #1c2128;box-shadow:0 10px 30px rgb(0 0 0 / .55)}
 .bubble img,.bubble video{width:100%;height:100%;object-fit:cover;display:block}
+/* rest timer drawn over the GIF, like the app's GIF background */
+.timer{position:absolute;inset:0;container-type:inline-size;display:grid;place-content:center;justify-items:center;text-align:center;background:radial-gradient(circle,rgb(0 0 0 / .45) 0 45%,rgb(0 0 0 / .15) 75%);color:#fff;text-shadow:0 1px 6px rgb(0 0 0 / .7)}
+.timer svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.timer circle{fill:none;stroke:rgb(255 255 255 / .18);stroke-width:4}
+.timer circle.arc{stroke:var(--green);stroke-linecap:round}
+.timer b{font:700 9cqw/1 var(--digits);color:var(--green);letter-spacing:.04em}
+.timer .t{font:400 26cqw/1.05 var(--digits);letter-spacing:-.02em}
+.timer small{font:400 7cqw/1 var(--digits);color:rgb(255 255 255 / .85)}
 .fx{position:absolute;left:var(--x);top:var(--y);z-index:1;width:0;height:0;pointer-events:none}
 .fx i{position:absolute;left:-26px;top:-26px;width:52px;height:52px;border-radius:50%;border:2px solid var(--c,var(--green));opacity:0;animation:ring 1.6s ease-out infinite}
 .fx i:nth-child(2){animation-delay:.25s}
@@ -215,6 +243,15 @@ footer a:hover{color:var(--text)}
   .seg label svg{display:none}
   .seg label{font-size:14px;padding:11px 4px;white-space:nowrap}
   .nav-cta{padding:10px 14px;font-size:14px}
+  .nav-end{gap:8px}
+  .nav-cta{white-space:nowrap}
+  .lang-btn{height:37px;padding:0 9px 0 10px}
+  .brand{font-size:17px}
+}
+@media (max-width:400px){
+  .lang-btn{width:37px;padding:0;justify-content:center}
+  .lang-btn #lang-code,.lang-btn .chev{display:none}
+  .lang-btn .globe{color:var(--text)}
   .field{flex-direction:column;gap:12px;background:none;border:0;padding:0}
   .field input{background:var(--ink);border:1px solid var(--line);border-radius:14px;min-height:56px;padding:0 16px}
   .field input:focus{border-color:var(--green)}
@@ -267,6 +304,7 @@ footer a:hover{color:var(--text)}
   <symbol id="i-apple" viewBox="0 0 24 24"><path fill="currentColor" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></symbol>
   <symbol id="i-eye" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></g></symbol>
   <symbol id="i-eye-off" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.6 5.1A10.6 10.6 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-2.2 3.1M6.6 6.6C3.7 8.4 2 12 2 12s3.6 7 10 7a9.6 9.6 0 0 0 5.4-1.6M9.9 9.9a3 3 0 0 0 4.2 4.2M3 3l18 18"/></g></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.6 3.9 5.8 3.9 9.5s-1.3 6.9-3.9 9.5c-2.6-2.6-3.9-5.8-3.9-9.5S9.4 5.1 12 2.5z"/></g></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
   <symbol id="i-done" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="currentColor" stroke-width="3"/><path fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" d="M17 29l7.5 7.5L40 21"/></symbol>
 </svg>
@@ -274,17 +312,32 @@ footer a:hover{color:var(--text)}
 <div class="top">
 <div class="gifwall" aria-hidden="true"><div class="gw"></div></div>
 <div class="shade" aria-hidden="true"></div>
-<canvas id="hero3d" role="img" aria-label="A round watch running CronoRep over a gym GIF, and a square watch running CronoRep on black."></canvas>
+<canvas id="hero3d" role="img" aria-label="A round watch running CronoRep over a gym GIF, and a square watch running CronoRep on black." data-i18n-label="hero_canvas"></canvas>
 <header class="wrap nav">
-  <a class="brand" href="#top" aria-label="CronoRep home"><img src="assets/icon-512.png" alt="" width="32" height="32">CronoRep</a>
-  <button class="nav-cta" type="button" data-open="both">Join the waitlist</button>
+  <a class="brand" href="#top" aria-label="CronoRep home" data-i18n-label="home"><img src="assets/icon-512.png" alt="" width="32" height="32">CronoRep</a>
+  <div class="nav-end">
+    <div class="lang">
+      <button class="lang-btn" id="lang-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="lang-menu" aria-label="Language">
+        <svg class="globe" aria-hidden="true"><use href="#i-globe"/></svg><span id="lang-code" aria-hidden="true">EN</span>
+        <svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="lang-menu" id="lang-menu" role="menu" aria-labelledby="lang-btn" hidden>
+        <p class="lang-head" data-i18n="lang_label" aria-hidden="true">Language</p>
+        <button class="lang-opt" type="button" role="menuitemradio" aria-checked="false" data-lang="auto"><span><span data-i18n="lang_auto">Auto</span><small id="lang-auto-sub"></small></span><svg aria-hidden="true"><use href="#i-check"/></svg></button>
+        <div class="lang-sep" role="separator"></div>
+        <button class="lang-opt" type="button" role="menuitemradio" aria-checked="false" data-lang="en" lang="en"><span>English</span><svg aria-hidden="true"><use href="#i-check"/></svg></button>
+        <button class="lang-opt" type="button" role="menuitemradio" aria-checked="false" data-lang="es" lang="es"><span>Español</span><svg aria-hidden="true"><use href="#i-check"/></svg></button>
+      </div>
+    </div>
+    <button class="nav-cta" type="button" data-open="both" data-i18n="cta">Join the waitlist</button>
+  </div>
 </header>
 
 <div class="wrap hero" id="top">
     <div class="copy">
-      <h1>Rest timer for your watch.</h1>
-      <p class="lead">Tap anywhere. Rest. Feel the buzz.</p>
-      <p class="sub">Finish your set and tap the screen. Your wrist buzzes when the rest is over. No small buttons, no phone.</p>
+      <h1 data-i18n="h1">Rest timer for your watch.</h1>
+      <p class="lead" data-i18n="lead">Tap anywhere. Rest. Feel the buzz.</p>
+      <p class="sub" data-i18n="sub">Finish your set and tap the screen. Your wrist buzzes when the rest is over. No small buttons, no phone.</p>
       <div class="stores">
         <a class="store primary" href="#join" data-store="android">
           <svg aria-hidden="true"><use href="#i-android"/></svg>
@@ -295,7 +348,7 @@ footer a:hover{color:var(--text)}
           <span><span class="s1">Apple Watch · coming soon</span><span class="s2">Get it for iPhone</span></span>
         </a>
       </div>
-      <p class="fine">Launching soon. Join the waitlist and get one email on launch day.</p>
+      <p class="fine" data-i18n="fine">Launching soon. Join the waitlist and get one email on launch day.</p>
     </div>
 
     <div class="stage">
@@ -305,7 +358,7 @@ footer a:hover{color:var(--text)}
         <div class="glow" aria-hidden="true">
           <svg class="ring" viewBox="0 0 100 100"><circle class="arc" cx="50" cy="50" r="47" pathLength="100" stroke-dasharray="100 100"/></svg>
         </div>
-        <button class="watch" id="watch" type="button" data-mode="idle" aria-label="Demo watch. Tap to start a 10 second rest.">
+        <button class="watch" id="watch" type="button" data-mode="idle" aria-label="Demo watch. Tap to start a 10 second rest." data-i18n-label="demo_watch">
           <span class="face">
             <svg class="ring" viewBox="0 0 100 100" aria-hidden="true">
               <circle class="track" cx="50" cy="50" r="47"/>
@@ -321,7 +374,7 @@ footer a:hover{color:var(--text)}
       </div>
       </div>
       </div>
-      <p class="stage-cap"><span class="dot" aria-hidden="true"></span><span><b>Tap a watch.</b> New rest, new GIF.</span></p>
+      <p class="stage-cap"><span class="dot" aria-hidden="true"></span><span data-i18n-html="stage_cap"><b>Tap a watch.</b> New rest, new GIF.</span></p>
     </div>
   </div>
   <p class="giphy">GIFs powered by GIPHY</p>
@@ -331,61 +384,61 @@ footer a:hover{color:var(--text)}
 
   <section>
     <div class="wrap">
-      <h2>One tap between sets.</h2>
-      <p class="h2-sub">A whole bench session. He looks at his watch one time, and only for the GIF.</p>
+      <h2 data-i18n="s_h2">One tap between sets.</h2>
+      <p class="h2-sub" data-i18n="s_sub">A whole bench session. He looks at his watch one time, and only for the GIF.</p>
       <ol class="story">
         <li class="frame">
           <figure class="pic">
-            <img src="assets/story-1.webp" alt="A man sits on a bench press bench. A smartwatch is on his left wrist." width="800" height="1000" loading="lazy">
-            <span class="bubble"><img src="assets/wear-3-idle.webp" alt="Watch screen: Tap to start, 1:30" width="450" height="450" loading="lazy"></span>
+            <img src="assets/story-1.webp" alt="A man sits on a bench press bench. A smartwatch is on his left wrist." data-i18n-alt="f1_alt" width="800" height="1000" loading="lazy">
+            <span class="bubble"><img src="assets/wear-3-idle.webp" alt="Watch screen: Tap to start, 1:30" data-i18n-alt="scr_idle" width="450" height="450" loading="lazy"></span>
           </figure>
-          <h3>Sit down.</h3>
-          <p>The watch is on your wrist. Your rest time is set.</p>
+          <h3 data-i18n="f1_h">Sit down.</h3>
+          <p data-i18n="f1_p">The watch is on your wrist. Your rest time is set.</p>
         </li>
         <li class="frame">
           <figure class="pic">
-            <img src="assets/story-2.webp" alt="He lies on the bench and presses the barbell up." width="800" height="1000" loading="lazy">
-            <span class="tag"><svg aria-hidden="true"><use href="#i-eye-off"/></svg>Not looking</span>
+            <img src="assets/story-2.webp" alt="He lies on the bench and presses the barbell up." data-i18n-alt="f2_alt" width="800" height="1000" loading="lazy">
+            <span class="tag"><svg aria-hidden="true"><use href="#i-eye-off"/></svg><span data-i18n="not_looking">Not looking</span></span>
           </figure>
-          <h3>Lift.</h3>
-          <p>Your eyes stay on the bar, not on a screen.</p>
+          <h3 data-i18n="f2_h">Lift.</h3>
+          <p data-i18n="f2_p">Your eyes stay on the bar, not on a screen.</p>
         </li>
         <li class="frame">
-          <figure class="pic" style="--x:41.5%;--y:77%">
-            <img src="assets/story-3.webp" alt="He sits up with his eyes closed and taps the watch on his left wrist." width="800" height="1000" loading="lazy">
+          <figure class="pic" style="--x:56.3%;--y:68.4%">
+            <img src="assets/story-3.webp" alt="He looks across the gym and taps the watch on his left wrist. The watch shows a new 1:30 rest." data-i18n-alt="f3_alt" width="800" height="1000" loading="lazy">
             <span class="fx" aria-hidden="true"><i></i><i></i></span>
-            <span class="bubble"><img src="assets/wear-1-rest.webp" alt="Watch screen: Rest, 1:22 left" width="450" height="450" loading="lazy"></span>
-            <span class="tag"><svg aria-hidden="true"><use href="#i-eye-off"/></svg>Not looking</span>
+            <span class="bubble"><img src="assets/wear-rest-start.webp" alt="Watch screen: Rest, 1:30 left" data-i18n-alt="scr_rest" width="450" height="450" loading="lazy"></span>
+            <span class="tag"><svg aria-hidden="true"><use href="#i-eye-off"/></svg><span data-i18n="not_looking">Not looking</span></span>
           </figure>
-          <h3>Rack it. Tap.</h3>
-          <p>Tap anywhere on the watch. The rest starts. No small buttons.</p>
+          <h3 data-i18n="f3_h">Rack it. Tap.</h3>
+          <p data-i18n="f3_p">Tap anywhere on the watch. The rest starts. No small buttons.</p>
         </li>
         <li class="frame">
           <figure class="pic" style="--x:40%;--y:70.5%">
-            <img src="assets/story-4.webp" alt="He drinks water and looks away. The watch is on his resting arm." width="800" height="1000" loading="lazy">
+            <img src="assets/story-4.webp" alt="He drinks water and looks away. The watch is on his resting arm." data-i18n-alt="f4_alt" width="800" height="1000" loading="lazy">
             <span class="fx buzz" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span class="bubble"><img src="assets/wear-2-go.webp" alt="Watch screen: Go, plus 0:04" width="450" height="450" loading="lazy"></span>
-            <span class="tag"><svg aria-hidden="true"><use href="#i-eye-off"/></svg>Not looking</span>
+            <span class="bubble"><img src="assets/wear-2-go.webp" alt="Watch screen: Go, plus 0:04" data-i18n-alt="scr_go" width="450" height="450" loading="lazy"></span>
+            <span class="tag"><svg aria-hidden="true"><use href="#i-eye-off"/></svg><span data-i18n="not_looking">Not looking</span></span>
           </figure>
-          <h3>Feel the buzz.</h3>
-          <p>Three soft ticks, then one long buzz on your wrist. The rest is over.</p>
+          <h3 data-i18n="f4_h">Feel the buzz.</h3>
+          <p data-i18n="f4_p">Three soft ticks, then one long buzz on your wrist. The rest is over.</p>
         </li>
         <li class="frame">
           <figure class="pic">
-            <img src="assets/story-5.webp" alt="He is back on the bench and does the next set." width="800" height="1000" loading="lazy">
-            <span class="tag"><svg aria-hidden="true"><use href="#i-eye-off"/></svg>Not looking</span>
+            <img src="assets/story-5.webp" alt="He is back on the bench and does the next set." data-i18n-alt="f5_alt" width="800" height="1000" loading="lazy">
+            <span class="tag"><svg aria-hidden="true"><use href="#i-eye-off"/></svg><span data-i18n="not_looking">Not looking</span></span>
           </figure>
-          <h3>Lift again.</h3>
-          <p>Your wrist told you when. You did not check the time once.</p>
+          <h3 data-i18n="f5_h">Lift again.</h3>
+          <p data-i18n="f5_p">Your wrist told you when. You did not check the time once.</p>
         </li>
         <li class="frame">
           <figure class="pic">
-            <img src="assets/story-6.webp" alt="He looks at his watch and laughs." width="800" height="1000" loading="lazy">
-            <span class="bubble"><video src="https://media.giphy.com/media/HSBsApUGF4erUp7NHV/200.mp4" muted loop playsinline autoplay preload="none" aria-label="A funny gym GIF on the watch"></video></span>
-            <span class="tag on"><svg aria-hidden="true"><use href="#i-eye"/></svg>Now he looks</span>
+            <img src="assets/story-6.webp" alt="He looks at his watch and laughs." data-i18n-alt="f6_alt" width="800" height="1000" loading="lazy">
+            <span class="bubble"><video src="https://media.giphy.com/media/HSBsApUGF4erUp7NHV/200.mp4" muted loop playsinline autoplay preload="none" aria-label="A funny gym GIF on the watch" data-i18n-label="f6_gif"></video><span class="timer" aria-hidden="true"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" pathLength="100"/><circle class="arc" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="30 100"/></svg><b>REST</b><span class="t">0:03</span><small>total 0:07</small></span></span>
+            <span class="tag on"><svg aria-hidden="true"><use href="#i-eye"/></svg><span data-i18n="now_looks">Now he looks</span></span>
           </figure>
-          <h3>Now look.</h3>
-          <p>One more rest, one funny gym GIF. A new one every time.</p>
+          <h3 data-i18n="f6_h">Now look.</h3>
+          <p data-i18n="f6_p">One more rest, one funny gym GIF. A new one every time.</p>
         </li>
       </ol>
     </div>
@@ -394,33 +447,33 @@ footer a:hover{color:var(--text)}
   <section>
     <div class="wrap split">
       <div>
-        <h2>Made for the gym floor.</h2>
+        <h2 data-i18n="m_h2">Made for the gym floor.</h2>
         <ul class="feats">
-          <li><svg aria-hidden="true"><use href="#i-check"/></svg><div><b>Hold to set your time</b><span>Change the rest in 5 second steps.</span></div></li>
-          <li><svg aria-hidden="true"><use href="#i-check"/></svg><div><b>Swipe for presets</b><span>0:30, 1:00, 1:30 and 2:00.</span></div></li>
-          <li><svg aria-hidden="true"><use href="#i-check"/></svg><div><b>Works without your phone</b><span>Leave the phone in the locker. The app runs on the watch.</span></div></li>
-          <li><svg aria-hidden="true"><use href="#i-check"/></svg><div><b>Private</b><span>No account, no analytics, no ads. Your settings stay on your watch.</span></div></li>
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg><div><b data-i18n="m1_b">Hold to set your time</b><span data-i18n="m1_s">Change the rest in 5 second steps.</span></div></li>
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg><div><b data-i18n="m2_b">Swipe for presets</b><span data-i18n="m2_s">0:30, 1:00, 1:30 and 2:00.</span></div></li>
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg><div><b data-i18n="m3_b">Works without your phone</b><span data-i18n="m3_s">Leave the phone in the locker. The app runs on the watch.</span></div></li>
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg><div><b data-i18n="m4_b">Private</b><span data-i18n="m4_s">No account, no analytics, no ads. Your settings stay on your watch.</span></div></li>
         </ul>
       </div>
-      <div class="presets shot" style="width:min(380px,100%);padding:14px"><img src="assets/wear-5-presets.webp" alt="Watch screen: preset list 0:30, 1:00, 1:30, 2:00" width="450" height="450" loading="lazy"></div>
+      <div class="presets shot" style="width:min(380px,100%);padding:14px"><img src="assets/wear-5-presets.webp" alt="Watch screen: preset list 0:30, 1:00, 1:30, 2:00" data-i18n-alt="scr_presets" width="450" height="450" loading="lazy"></div>
     </div>
   </section>
 
   <section>
     <div class="wrap price">
-      <p class="big"><small>Pay one time</small>$1.99</p>
+      <p class="big"><small data-i18n="p_small">Pay one time</small>$1.99</p>
       <ul>
-        <li>10 hours of timer use free</li>
-        <li>Then one payment unlocks it forever</li>
-        <li>No subscription. No ads. No account.</li>
+        <li data-i18n="p1">10 hours of timer use free</li>
+        <li data-i18n="p2">Then one payment unlocks it forever</li>
+        <li data-i18n="p3">No subscription. No ads. No account.</li>
       </ul>
     </div>
   </section>
 
   <section id="join">
     <div class="wrap join">
-      <h2>Be first on launch day.</h2>
-      <p class="h2-sub">Pick your watch. We send one email when CronoRep is in the store.</p>
+      <h2 data-i18n="j_h2">Be first on launch day.</h2>
+      <p class="h2-sub" data-i18n="j_sub">Pick your watch. We send one email when CronoRep is in the store.</p>
       <div class="inline-form" data-form-slot="inline"></div>
     </div>
   </section>
@@ -428,38 +481,38 @@ footer a:hover{color:var(--text)}
 
 <footer>
   <div class="wrap">
-    <span>CronoRep. Gym rest timer for Wear OS and Apple Watch.</span>
-    <a href="https://enautomatico.online/cronorep/privacy">Privacy policy</a>
-    <small class="credits">3D models: <a href="https://sketchfab.com/3d-models/cf15ecbf159f42a28df5e56bdfa666bb">Apple Watch Series 7</a> by Lambo_SC04 and <a href="https://sketchfab.com/3d-models/8c48037b20e24990b266618621ca6a6a">Samsung Galaxy Watch 5</a> by neverrainmyself, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Colors and screens changed. Apple Watch is a trademark of Apple Inc. Galaxy Watch is a trademark of Samsung. CronoRep is not made by Apple or Samsung.</small>
+    <span data-i18n="foot">CronoRep. Gym rest timer for Wear OS and Apple Watch.</span>
+    <a href="https://enautomatico.online/cronorep/privacy" data-i18n="privacy">Privacy policy</a>
+    <small class="credits" data-i18n-html="credits">3D models: <a href="https://sketchfab.com/3d-models/cf15ecbf159f42a28df5e56bdfa666bb">Apple Watch Series 7</a> by Lambo_SC04 and <a href="https://sketchfab.com/3d-models/8c48037b20e24990b266618621ca6a6a">Samsung Galaxy Watch 5</a> by neverrainmyself, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Colors and screens changed. Apple Watch is a trademark of Apple Inc. Galaxy Watch is a trademark of Samsung. CronoRep is not made by Apple or Samsung.</small>
   </div>
 </footer>
 
 <dialog id="dlg" aria-labelledby="dlg-title">
   <div class="dlg-head">
     <div><h2 id="dlg-title">Get CronoRep first</h2><p id="dlg-sub">It is not in the stores yet. Leave your email and we tell you on launch day.</p></div>
-    <button class="x" type="button" data-close aria-label="Close">&times;</button>
+    <button class="x" type="button" data-close aria-label="Close" data-i18n-label="close">&times;</button>
   </div>
   <div data-form-slot="dialog"></div>
 </dialog>
 
 <template id="tpl-form">
   <form class="wl" novalidate>
-    <div class="seg" role="radiogroup" aria-label="Your watch">
+    <div class="seg" role="radiogroup" aria-label="Your watch" data-i18n-label="your_watch">
       <input type="radio" name="platform" value="android" id="__-a"><label for="__-a"><svg aria-hidden="true"><use href="#i-android"/></svg>Wear OS</label>
       <input type="radio" name="platform" value="ios" id="__-i"><label for="__-i"><svg aria-hidden="true"><use href="#i-apple"/></svg>Apple Watch</label>
-      <input type="radio" name="platform" value="both" id="__-b"><label for="__-b">Both</label>
+      <input type="radio" name="platform" value="both" id="__-b"><label for="__-b" data-i18n="both">Both</label>
     </div>
     <div class="field">
-      <input type="email" name="email" required autocomplete="email" inputmode="email" placeholder="you@email.com" aria-label="Email address">
-      <button class="go" type="submit">Join the waitlist</button>
+      <input type="email" name="email" required autocomplete="email" inputmode="email" placeholder="you@email.com" aria-label="Email address" data-i18n-ph="email_ph" data-i18n-label="email_label">
+      <button class="go" type="submit" data-i18n="cta">Join the waitlist</button>
     </div>
     <div class="hp" aria-hidden="true"><label>Company <input type="text" name="company" tabindex="-1" autocomplete="off"></label></div>
     <p class="msg" role="status"></p>
-    <p class="note">One email on launch day. No spam. Unsubscribe any time.</p>
+    <p class="note" data-i18n="note">One email on launch day. No spam. Unsubscribe any time.</p>
     <div class="done">
       <svg aria-hidden="true"><use href="#i-done"/></svg>
-      <h3>You are on the list.</h3>
-      <p>We send you one email when CronoRep is live.</p>
+      <h3 data-i18n="done_h">You are on the list.</h3>
+      <p data-i18n="done_p">We send you one email when CronoRep is live.</p>
     </div>
   </form>
 </template>
@@ -473,6 +526,205 @@ const CONFIG = {
     ios: ""      // e.g. "https://apps.apple.com/app/id0000000000"
   }
 };
+
+/* ---- language: "auto" follows the device, or the visitor picks one ---- */
+// English text lives in the HTML and is read from it at start. Only strings that
+// the script writes need an English entry here. To add a language: add a block
+// to I18N, an <option> to #lang, and a README.<code>.md.
+const I18N = {
+  en: {
+    title: "CronoRep: Gym rest timer for your watch",
+    desc: "Tap anywhere on your watch to start your rest. Your wrist buzzes when it ends. CronoRep for Wear OS and Apple Watch. Join the waitlist.",
+    fine_live: "10 hours free. Then pay once. No subscription.",
+    err_email: "Please check your email address.",
+    joining: "Joining…",
+    err_rate: "Too many tries. Please wait a few minutes.",
+    err_fail: "That did not work. Please try again.",
+    dlg_android: "Get CronoRep for Wear OS",
+    dlg_android_s: "It is not on Google Play yet. Leave your email and we tell you on launch day.",
+    dlg_ios: "Get CronoRep for Apple Watch",
+    dlg_ios_s: "It is not on the App Store yet. Leave your email and we tell you on launch day.",
+    dlg_both: "Get CronoRep first",
+    dlg_both_s: "It is not in the stores yet. Leave your email and we tell you on launch day.",
+    badge_ios: "Download on the App Store",
+    badge_android: "Get it on Google Play",
+    lang_auto_sub: "From your device: {l}"
+  },
+  es: {
+    title: "CronoRep: temporizador de descanso para tu reloj",
+    desc: "Toca tu reloj en cualquier parte para empezar el descanso. Tu muñeca vibra cuando termina. CronoRep para Wear OS y Apple Watch. Únete a la lista de espera.",
+    fine_live: "10 horas gratis. Luego pagas una vez. Sin suscripción.",
+    err_email: "Revisa tu dirección de email.",
+    joining: "Uniéndote…",
+    err_rate: "Demasiados intentos. Espera unos minutos.",
+    err_fail: "No funcionó. Inténtalo otra vez.",
+    dlg_android: "Consigue CronoRep para Wear OS",
+    dlg_android_s: "Aún no está en Google Play. Déjanos tu email y te avisamos el día del lanzamiento.",
+    dlg_ios: "Consigue CronoRep para Apple Watch",
+    dlg_ios_s: "Aún no está en el App Store. Déjanos tu email y te avisamos el día del lanzamiento.",
+    dlg_both: "Consigue CronoRep antes que nadie",
+    dlg_both_s: "Aún no está en las tiendas. Déjanos tu email y te avisamos el día del lanzamiento.",
+    badge_ios: "Descárgalo en el App Store",
+    badge_android: "Disponible en Google Play",
+    lang_label: "Idioma",
+    lang_auto: "Automático",
+    lang_auto_sub: "Según tu dispositivo: {l}",
+    home: "Inicio de CronoRep",
+    cta: "Únete a la lista",
+    hero_canvas: "Un reloj redondo con CronoRep sobre un GIF de gimnasio, y un reloj cuadrado con CronoRep sobre negro.",
+    h1: "Temporizador de descanso para tu reloj.",
+    lead: "Toca donde quieras. Descansa. Siente la vibración.",
+    sub: "Termina tu serie y toca la pantalla. Tu muñeca vibra cuando acaba el descanso. Sin botones pequeños, sin teléfono.",
+    fine: "Muy pronto. Únete a la lista de espera y recibe un solo email el día del lanzamiento.",
+    demo_watch: "Reloj de demostración. Toca para empezar un descanso de 10 segundos.",
+    stage_cap: "<b>Toca un reloj.</b> Nuevo descanso, nuevo GIF.",
+    s_h2: "Un toque entre series.",
+    s_sub: "Una sesión entera de press de banca. Mira su reloj una sola vez, y solo por el GIF.",
+    f1_alt: "Un hombre sentado en un banco de press. Lleva un reloj inteligente en la muñeca izquierda.",
+    scr_idle: "Pantalla del reloj: toca para empezar, 1:30",
+    f1_h: "Siéntate.",
+    f1_p: "El reloj está en tu muñeca. Tu tiempo de descanso ya está listo.",
+    f2_alt: "Se tumba en el banco y empuja la barra hacia arriba.",
+    not_looking: "No mira",
+    f2_h: "Levanta.",
+    f2_p: "Tus ojos siguen en la barra, no en una pantalla.",
+    f3_alt: "Mira al gimnasio y toca el reloj de su muñeca izquierda. El reloj muestra un descanso nuevo de 1:30.",
+    scr_rest: "Pantalla del reloj: descanso, quedan 1:30",
+    f3_h: "Deja la barra. Toca.",
+    f3_p: "Toca el reloj en cualquier parte. Empieza el descanso. Sin botones pequeños.",
+    f4_alt: "Bebe agua y mira hacia otro lado. El reloj está en el brazo que descansa.",
+    scr_go: "Pantalla del reloj: ya, más 0:04",
+    f4_h: "Siente la vibración.",
+    f4_p: "Tres toques suaves y luego una vibración larga en tu muñeca. El descanso terminó.",
+    f5_alt: "Vuelve al banco y hace la siguiente serie.",
+    f5_h: "Levanta otra vez.",
+    f5_p: "Tu muñeca te avisó. No miraste la hora ni una vez.",
+    f6_alt: "Mira su reloj y se ríe.",
+    f6_gif: "Un GIF divertido de gimnasio en el reloj",
+    now_looks: "Ahora mira",
+    f6_h: "Ahora mira.",
+    f6_p: "Un descanso más, un GIF de gimnasio divertido. Uno nuevo cada vez.",
+    m_h2: "Hecho para el gimnasio.",
+    m1_b: "Mantén pulsado para elegir el tiempo",
+    m1_s: "Cambia el descanso en pasos de 5 segundos.",
+    m2_b: "Desliza para ver tiempos fijos",
+    m2_s: "0:30, 1:00, 1:30 y 2:00.",
+    m3_b: "Funciona sin tu teléfono",
+    m3_s: "Deja el teléfono en la mochila. La app funciona en el reloj.",
+    m4_b: "Privado",
+    m4_s: "Sin cuenta, sin analíticas, sin anuncios. Tus ajustes se quedan en tu reloj.",
+    scr_presets: "Pantalla del reloj: lista de tiempos 0:30, 1:00, 1:30, 2:00",
+    p_small: "Pagas una vez",
+    p1: "10 horas de uso gratis",
+    p2: "Luego un solo pago lo desbloquea para siempre",
+    p3: "Sin suscripción. Sin anuncios. Sin cuenta.",
+    j_h2: "Sé el primero el día del lanzamiento.",
+    j_sub: "Elige tu reloj. Te enviamos un email cuando CronoRep esté en la tienda.",
+    foot: "CronoRep. Temporizador de descanso para Wear OS y Apple Watch.",
+    privacy: "Política de privacidad",
+    credits: 'Modelos 3D: <a href="https://sketchfab.com/3d-models/cf15ecbf159f42a28df5e56bdfa666bb">Apple Watch Series 7</a> de Lambo_SC04 y <a href="https://sketchfab.com/3d-models/8c48037b20e24990b266618621ca6a6a">Samsung Galaxy Watch 5</a> de neverrainmyself, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Colores y pantallas cambiados. Apple Watch es una marca de Apple Inc. Galaxy Watch es una marca de Samsung. CronoRep no está hecho por Apple ni por Samsung.',
+    close: "Cerrar",
+    your_watch: "Tu reloj",
+    both: "Ambos",
+    email_ph: "tu@email.com",
+    email_label: "Dirección de email",
+    note: "Un email el día del lanzamiento. Sin spam. Date de baja cuando quieras.",
+    done_h: "Ya estás en la lista.",
+    done_p: "Te enviamos un email cuando CronoRep esté disponible."
+  }
+};
+const LANGS = Object.keys(I18N);
+const LANG_KEY = "cronorep-lang";
+const I18N_ATTRS = { "data-i18n": "textContent", "data-i18n-html": "innerHTML", "data-i18n-alt": "alt", "data-i18n-label": "aria-label", "data-i18n-ph": "placeholder", "data-i18n-title": "title" };
+let LANG = "en";
+let langPick = "auto";
+function t(key) { return (I18N[LANG] && I18N[LANG][key]) || I18N.en[key] || key; }
+function deviceLang() {
+  for (const l of navigator.languages || [navigator.language || "en"]) {
+    const code = String(l).slice(0, 2).toLowerCase();
+    if (LANGS.includes(code)) return code;
+  }
+  return "en";
+}
+function i18nRoots() { return [document, document.getElementById("tpl-form").content]; }
+function i18nEach(fn) {
+  for (const root of i18nRoots()) {
+    for (const [attr, prop] of Object.entries(I18N_ATTRS)) {
+      root.querySelectorAll("[" + attr + "]").forEach(el => fn(el, el.getAttribute(attr), prop));
+    }
+  }
+}
+function i18nCapture() {
+  // Read the English text from the HTML once, before anything is changed.
+  i18nEach((el, key, prop) => {
+    if (I18N.en[key] !== undefined) return;
+    I18N.en[key] = prop === "textContent" || prop === "innerHTML" ? el[prop] : el.getAttribute(prop);
+  });
+}
+function applyLang() {
+  LANG = langPick === "auto" ? deviceLang() : langPick;
+  document.documentElement.lang = LANG;
+  document.title = t("title");
+  document.querySelector('meta[name="description"]').content = t("desc");
+  i18nEach((el, key, prop) => {
+    const v = t(key);
+    if (prop === "textContent" || prop === "innerHTML") el[prop] = v;
+    else el.setAttribute(prop, v);
+  });
+  document.getElementById("lang-code").textContent = LANG.toUpperCase();
+  document.getElementById("lang-btn").setAttribute("aria-label", t("lang_label") + ": " + LANG_NAMES[LANG]);
+  document.getElementById("lang-auto-sub").textContent = t("lang_auto_sub").replace("{l}", LANG_NAMES[deviceLang()]);
+  document.querySelectorAll(".lang-opt").forEach(o => o.setAttribute("aria-checked", String(o.dataset.lang === langPick)));
+  if (dlg.open) setDialogText(dlgPlatform);
+}
+const LANG_NAMES = { en: "English", es: "Español" };
+function langMenu() {
+  const btn = document.getElementById("lang-btn");
+  const menu = document.getElementById("lang-menu");
+  const opts = [...menu.querySelectorAll(".lang-opt")];
+  const isOpen = () => !menu.hidden;
+  function open() {
+    menu.hidden = false;
+    btn.setAttribute("aria-expanded", "true");
+    (opts.find(o => o.dataset.lang === langPick) || opts[0]).focus();
+  }
+  function close(focusBtn) {
+    if (!isOpen()) return;
+    menu.hidden = true;
+    btn.setAttribute("aria-expanded", "false");
+    if (focusBtn) btn.focus();
+  }
+  btn.addEventListener("click", () => isOpen() ? close(false) : open());
+  btn.addEventListener("keydown", e => { if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); open(); } });
+  opts.forEach(o => o.addEventListener("click", () => {
+    langPick = o.dataset.lang;
+    try { localStorage.setItem(LANG_KEY, langPick); } catch (_) {}
+    applyLang();
+    close(true);
+  }));
+  menu.addEventListener("keydown", e => {
+    const i = opts.indexOf(document.activeElement);
+    const go = n => { e.preventDefault(); opts[(n + opts.length) % opts.length].focus(); };
+    if (e.key === "ArrowDown") go(i + 1);
+    else if (e.key === "ArrowUp") go(i - 1);
+    else if (e.key === "Home") go(0);
+    else if (e.key === "End") go(opts.length - 1);
+    else if (e.key === "Escape") { e.preventDefault(); close(true); }
+    else if (e.key === "Tab") close(false);
+  });
+  document.addEventListener("pointerdown", e => { if (isOpen() && !e.target.closest(".lang")) close(false); });
+}
+function initLang() {
+  i18nCapture();
+  const q = new URLSearchParams(location.search).get("lang");
+  let saved = null;
+  try { saved = localStorage.getItem(LANG_KEY); } catch (_) {}
+  // ?lang=es in a link wins for that visit, but does not change the saved choice.
+  if (LANGS.includes(q)) langPick = q;
+  else if (saved === "auto" || LANGS.includes(saved)) langPick = saved;
+  applyLang();
+  langMenu();
+}
 
 /* ---- forms ---- */
 let uid = 0;
@@ -503,51 +755,50 @@ async function submit(e) {
   const platform = (form.querySelector("input[name=platform]:checked") || {}).value || "both";
   msg.className = "msg";
   if (!EMAIL_RE.test(email)) {
-    msg.textContent = "Please check your email address.";
+    msg.textContent = t("err_email");
     msg.classList.add("err");
     form.email.focus();
     return;
   }
   btn.disabled = true;
-  btn.textContent = "Joining…";
+  btn.textContent = t("joining");
   try {
     const res = await fetch(CONFIG.api, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, platform, lang: navigator.language || "", company: form.company.value })
+      // A picked language tells us which language the launch email needs.
+      body: JSON.stringify({ email, platform, lang: langPick === "auto" ? (navigator.language || "") : langPick, company: form.company.value })
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok || !data.ok) throw new Error(data.error || res.status);
     form.classList.add("ok");
     try { localStorage.setItem("cronorep-joined", platform); } catch (_) {}
   } catch (err) {
-    msg.textContent = String(err.message) === "rate"
-      ? "Too many tries. Please wait a few minutes."
-      : "That did not work. Please try again.";
+    msg.textContent = t(String(err.message) === "rate" ? "err_rate" : "err_fail");
     msg.classList.add("err");
   } finally {
     btn.disabled = false;
-    btn.textContent = "Join the waitlist";
+    btn.textContent = t("cta");
   }
 }
 
 const inlineForm = mountForm(document.querySelector("[data-form-slot=inline]"), "both");
 const dlg = document.getElementById("dlg");
 const dlgSlot = document.querySelector("[data-form-slot=dialog]");
-const TITLES = {
-  android: ["Get CronoRep for Wear OS", "It is not on Google Play yet. Leave your email and we tell you on launch day."],
-  ios: ["Get CronoRep for Apple Watch", "It is not on the App Store yet. Leave your email and we tell you on launch day."],
-  both: ["Get CronoRep first", "It is not in the stores yet. Leave your email and we tell you on launch day."]
-};
+let dlgPlatform = "both";
+function setDialogText(p) {
+  const k = "dlg_" + (["android", "ios"].includes(p) ? p : "both");
+  document.getElementById("dlg-title").textContent = t(k);
+  document.getElementById("dlg-sub").textContent = t(k + "_s");
+}
 function openWaitlist(p) {
   if (typeof dlg.showModal !== "function") {
     setPlatform(inlineForm, p);
     document.getElementById("join").scrollIntoView();
     return;
   }
-  const [t, s] = TITLES[p] || TITLES.both;
-  document.getElementById("dlg-title").textContent = t;
-  document.getElementById("dlg-sub").textContent = s;
+  dlgPlatform = p;
+  setDialogText(p);
   const f = mountForm(dlgSlot, p);
   dlg.showModal();
   f.email.focus();
@@ -563,17 +814,18 @@ document.querySelectorAll("[data-store]").forEach(a => {
     if (CONFIG.store[p]) badge.rel = "noopener";
     else badge.addEventListener("click", e => { e.preventDefault(); openWaitlist(p); });
     badge.innerHTML = p === "ios"
-      ? '<img src="assets/app-store-badge.svg" alt="Download on the App Store" width="160" height="54">'
-      : '<img src="assets/google-play-badge.png" alt="Get it on Google Play" width="207" height="80">';
+      ? '<img src="assets/app-store-badge.svg" alt="Download on the App Store" data-i18n-alt="badge_ios" width="160" height="54">'
+      : '<img src="assets/google-play-badge.png" alt="Get it on Google Play" data-i18n-alt="badge_android" width="207" height="80">';
     a.replaceWith(badge);
     return;
   }
   a.addEventListener("click", e => { e.preventDefault(); openWaitlist(p); });
 });
-if (CONFIG.store.android && CONFIG.store.ios) { const f = document.querySelector(".hero .fine"); if (f) f.textContent = "10 hours free. Then pay once. No subscription."; }
+if (CONFIG.store.android && CONFIG.store.ios) { const f = document.querySelector(".hero .fine"); if (f) f.dataset.i18n = "fine_live"; }
 document.querySelectorAll("[data-open]").forEach(b => b.addEventListener("click", () => openWaitlist(b.dataset.open)));
 dlg.querySelector("[data-close]").addEventListener("click", () => dlg.close());
 dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+initLang();
 
 /* ---- live watch demo: same behavior as the app, 10 s rest ---- */
 (() => {

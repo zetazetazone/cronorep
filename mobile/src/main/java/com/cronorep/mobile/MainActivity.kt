@@ -44,9 +44,9 @@ class MainActivity : ComponentActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         RestTimer.load(this)
         Trial.load(this)
-        // A new install gets the used trial time back from the server.
-        TrialSync.sync(this, "phone") { Trial.merge(this, it) }
         Billing.init(this)
+        // A new install gets the used trial time back from the server. A paid user needs no guard.
+        if (!Billing.unlocked) TrialSync.sync(this, "phone") { Trial.merge(this, it) }
         Look.load(this)
         // Debug only: adb shell am start -n com.cronorep/com.cronorep.mobile.MainActivity --ez paywall true
         val previewPaywall = BuildConfig.DEBUG && intent.getBooleanExtra("paywall", false)
@@ -100,7 +100,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onPause() {
         Trial.stopCounting(this)
-        TrialSync.sync(this, "phone") { Trial.merge(this, it) }
+        if (!Billing.unlocked) TrialSync.sync(this, "phone") { Trial.merge(this, it) }
         super.onPause()
     }
 

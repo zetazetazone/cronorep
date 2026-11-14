@@ -49,4 +49,9 @@ class TrialMathTest {
         assertNull(TrialMath.parseUsedMs("<html>502</html>"))
         assertNull(TrialMath.parseUsedMs(""))
     }
+
+    @Test
+    fun shortCodeIsTheFirstEightCharactersOfTheTrialId() {
+        assertEquals("40369e43", TrialMath.shortCode(TrialMath.trialId("abc")))
+    }
 }

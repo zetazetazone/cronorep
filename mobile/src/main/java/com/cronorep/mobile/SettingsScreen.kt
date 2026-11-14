@@ -31,6 +31,7 @@ import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -58,6 +59,7 @@ import com.cronorep.Look
 import com.cronorep.LookSettings
 import com.cronorep.RestTimer
 import com.cronorep.Trial
+import com.cronorep.TrialSync
 import com.cronorep.formatTime
 
 /** Rest time and the look of the timer. Look changes also go to the watch. */
@@ -65,6 +67,7 @@ import com.cronorep.formatTime
 fun SettingsScreen(onDone: () -> Unit) {
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
+    val trialCode = remember { TrialSync.shortCode(context) }
     val look = Look.settings
     // Save battery mode forces a black background, so the choices are off.
     val canChooseBackground = !look.saveBattery
@@ -242,6 +245,9 @@ fun SettingsScreen(onDone: () -> Unit) {
         }
         if (!Billing.unlocked) {
             fullRow { Text(Trial.SERVER_NOTE, color = Dim, fontSize = 13.sp) }
+            if (trialCode != null) {
+                fullRow { Text("Trial code: $trialCode", color = Dim, fontSize = 13.sp) }
+            }
         }
         fullRow {
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {

@@ -29,6 +29,9 @@ object TrialSync {
         }.start()
     }
 
+    /** A short code of the device trial ID, shown in settings so a deletion request can name it. */
+    fun shortCode(context: Context): String? = deviceTrialId(context)?.let { TrialMath.shortCode(it) }
+
     /** ANDROID_ID stays the same after a new install. Only its hash is sent. */
     @SuppressLint("HardwareIds")
     private fun deviceTrialId(context: Context): String? {

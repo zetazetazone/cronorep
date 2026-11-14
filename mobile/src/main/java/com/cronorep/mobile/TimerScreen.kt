@@ -35,14 +35,17 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.cronorep.BackgroundKind
+import com.cronorep.Billing
 import com.cronorep.Gradient
 import com.cronorep.Look
 import com.cronorep.LookSettings
 import com.cronorep.RestTimer
+import com.cronorep.Trial
 import com.cronorep.formatTime
 import kotlinx.coroutines.delay
 
@@ -84,6 +87,17 @@ fun TimerScreen(onTap: () -> Unit, onOpenSettings: () -> Unit) {
         val overtimeSize = with(LocalDensity.current) { (maxWidth * 0.21f).toSp() }
 
         LookBackground(look)
+
+        // A new install, before any trial use: say at once that the trial time goes to our server.
+        if (!Billing.unlocked && Trial.usedMs == 0L) {
+            Text(
+                Trial.SERVER_NOTE,
+                color = Dim,
+                fontSize = 13.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.align(Alignment.BottomCenter).padding(horizontal = 24.dp, vertical = 24.dp),
+            )
+        }
 
         if (startedAt == 0L) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {

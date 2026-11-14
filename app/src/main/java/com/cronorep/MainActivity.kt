@@ -67,9 +67,9 @@ class MainActivity : ComponentActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         RestTimer.load(this)
         Trial.load(this)
-        // A new install gets the used trial time back from the server.
-        TrialSync.sync(this, "wear") { Trial.merge(this, it) }
         Billing.init(this)
+        // A new install gets the used trial time back from the server. A paid user needs no guard.
+        if (!Billing.unlocked) TrialSync.sync(this, "wear") { Trial.merge(this, it) }
         Look.load(this)
         // The phone may have sent a look while this app was not installed or not listening.
         LookSync.fetchLatest(this)
@@ -113,7 +113,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onPause() {
         Trial.stopCounting(this)
-        TrialSync.sync(this, "wear") { Trial.merge(this, it) }
+        if (!Billing.unlocked) TrialSync.sync(this, "wear") { Trial.merge(this, it) }
         super.onPause()
     }
 
@@ -170,6 +170,17 @@ private fun TimerScreen(onTap: () -> Unit, onLongPress: () -> Unit) {
             BackgroundKind.GRADIENT -> GradientBackground(look.gradient)
             BackgroundKind.GIF_RANDOM, BackgroundKind.GIF_FIXED -> Look.gifUrl?.let { GifBackground(it) }
             BackgroundKind.BLACK -> Unit
+        }
+
+        // A new install, before any trial use: say at once that the trial time goes to our server.
+        if (!Billing.unlocked && Trial.usedMs == 0L) {
+            Text(
+                Trial.SERVER_NOTE,
+                color = Dim,
+                fontSize = 10.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.align(Alignment.BottomCenter).padding(start = 28.dp, end = 28.dp, bottom = 14.dp),
+            )
         }
 
         if (startedAt == 0L) {
@@ -249,6 +260,7 @@ private fun DarkLayer() {
 @Composable
 private fun SettingsScreen(onDone: () -> Unit) {
     val context = LocalContext.current
+    val trialCode = remember { TrialSync.shortCode(context) }
     // Page 0: the +/- control. Page 1 (swipe): the preset bubbles. Page 2: the look.
     // Each page fills the screen, so its content is always in the center.
     VerticalPager(
@@ -297,10 +309,18 @@ private fun SettingsScreen(onDone: () -> Unit) {
                         Text(
                             Trial.SERVER_NOTE,
                             color = Dim,
-                            fontSize = 8.sp,
+                            fontSize = 10.sp,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.padding(horizontal = 24.dp),
                         )
+                        if (trialCode != null) {
+                            Text(
+                                "Trial code: $trialCode",
+                                color = Dim,
+                                fontSize = 10.sp,
+                                textAlign = TextAlign.Center,
+                            )
+                        }
                     }
                 }
             } else if (page == 1) {
@@ -395,7 +415,7 @@ private fun PaywallScreen(onUnlock: () -> Unit) {
             Text(it, color = Dim, fontSize = 11.sp, textAlign = TextAlign.Center)
         }
         Spacer(Modifier.height(6.dp))
-        Text(Trial.SERVER_NOTE, color = Dim, fontSize = 8.sp, textAlign = TextAlign.Center)
+        Text(Trial.SERVER_NOTE, color = Dim, fontSize = 10.sp, textAlign = TextAlign.Center)
         Text("Privacy: $privacyPolicyUrl", color = Dim, fontSize = 8.sp, textAlign = TextAlign.Center)
     }
 }

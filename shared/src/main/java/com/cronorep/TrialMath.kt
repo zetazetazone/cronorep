@@ -18,6 +18,9 @@ object TrialMath {
             .digest("cronorep-trial:$androidId".toByteArray(Charsets.UTF_8))
             .joinToString("") { "%02x".format(it) }
 
+    /** The first 8 characters of the trial ID: a short code the user can send us to delete the data. */
+    fun shortCode(trialId: String): String = trialId.take(8)
+
     /** id is hex and platform is a fixed word, so no JSON escaping is needed. */
     fun requestBody(id: String, platform: String, usedMs: Long): String =
         """{"id":"$id","platform":"$platform","usedMs":$usedMs}"""

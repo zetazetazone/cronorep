@@ -21,7 +21,7 @@ android {
         // The same package as the watch app: both are one Google Play listing.
         applicationId = "com.cronorep"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         // Phone bundles use 1001 and up. Watch bundles use the low numbers.
         versionCode = 1001
         versionName = "1.0.0"

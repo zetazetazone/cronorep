@@ -44,7 +44,7 @@ fun PaywallScreen(onUnlock: () -> Unit) {
             onClick = onUnlock,
             colors = ButtonDefaults.buttonColors(containerColor = Green, contentColor = Color.Black),
         ) {
-            Text("Unlock " + (Billing.priceText ?: ""), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Text(listOfNotNull("Unlock", Billing.priceText).joinToString(" "), fontSize = 18.sp, fontWeight = FontWeight.Bold)
         }
         Billing.message?.let {
             Spacer(Modifier.height(12.dp))

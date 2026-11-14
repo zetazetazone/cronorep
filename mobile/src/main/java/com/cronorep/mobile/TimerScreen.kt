@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -34,6 +35,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -66,7 +68,7 @@ fun TimerScreen(onTap: () -> Unit, onOpenSettings: () -> Unit) {
         }
     }
 
-    Box(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
@@ -78,13 +80,25 @@ fun TimerScreen(onTap: () -> Unit, onOpenSettings: () -> Unit) {
             ),
         contentAlignment = Alignment.Center,
     ) {
+        // Sizes come from the screen width. Dividing by the font scale (toSp) keeps the drawn size fixed in dp,
+        // so the digits always fit inside the ring.
+        val idleTimeSize = with(LocalDensity.current) { (maxWidth * 0.25f).toSp() }
+        val timeLeftSize = with(LocalDensity.current) { (maxWidth * 0.26f).toSp() }
+        val overtimeSize = with(LocalDensity.current) { (maxWidth * 0.21f).toSp() }
+
         LookBackground(look)
 
         if (startedAt == 0L) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("TAP TO START", color = Green, fontSize = 28.sp, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(8.dp))
-                Text(formatTime(RestTimer.restSeconds.toLong()), color = Color.White, fontSize = 96.sp)
+                Text(
+                    formatTime(RestTimer.restSeconds.toLong()),
+                    color = Color.White,
+                    fontSize = idleTimeSize,
+                    maxLines = 1,
+                    softWrap = false,
+                )
                 Spacer(Modifier.height(8.dp))
                 Text("Hold to set time", color = Dim, fontSize = 16.sp)
             }
@@ -105,10 +119,22 @@ fun TimerScreen(onTap: () -> Unit, onOpenSettings: () -> Unit) {
                 if (resting) {
                     val remainingSeconds = (totalMs - elapsedMs + 999) / 1000
                     Text("REST", color = Green, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                    Text(formatTime(remainingSeconds), color = Color.White, fontSize = 104.sp)
+                    Text(
+                        formatTime(remainingSeconds),
+                        color = Color.White,
+                        fontSize = timeLeftSize,
+                        maxLines = 1,
+                        softWrap = false,
+                    )
                 } else {
                     Text("GO", color = Orange, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                    Text("+" + formatTime((elapsedMs - totalMs) / 1000), color = Orange, fontSize = 92.sp)
+                    Text(
+                        "+" + formatTime((elapsedMs - totalMs) / 1000),
+                        color = Orange,
+                        fontSize = overtimeSize,
+                        maxLines = 1,
+                        softWrap = false,
+                    )
                 }
                 if (!look.minimalist) {
                     Text("total " + formatTime(elapsedMs / 1000), color = Dim, fontSize = 18.sp)

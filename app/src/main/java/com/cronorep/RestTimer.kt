@@ -9,9 +9,10 @@ import androidx.compose.runtime.setValue
 /** Timer state for the whole app. It stays alive when the activity is recreated. */
 object RestTimer {
     const val DEFAULT_REST_SECONDS = 90
-    const val MIN_REST_SECONDS = 15
+    const val MIN_REST_SECONDS = 10
     const val MAX_REST_SECONDS = 600
-    const val STEP_SECONDS = 15
+    const val STEP_SECONDS = 5
+    val PRESETS_SECONDS = listOf(30, 60, 90, 120)
 
     private const val PREFS = "cronorep"
     private const val KEY_REST = "rest_seconds"
@@ -32,8 +33,10 @@ object RestTimer {
             .coerceIn(MIN_REST_SECONDS, MAX_REST_SECONDS)
     }
 
-    fun changeRest(context: Context, deltaSeconds: Int) {
-        restSeconds = (restSeconds + deltaSeconds).coerceIn(MIN_REST_SECONDS, MAX_REST_SECONDS)
+    fun changeRest(context: Context, deltaSeconds: Int) = setRest(context, restSeconds + deltaSeconds)
+
+    fun setRest(context: Context, seconds: Int) {
+        restSeconds = seconds.coerceIn(MIN_REST_SECONDS, MAX_REST_SECONDS)
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .edit().putInt(KEY_REST, restSeconds).apply()
     }

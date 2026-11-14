@@ -32,6 +32,10 @@ class RestTimerService : Service() {
         stopSelf()
     }
 
+    private val warningTick = Runnable {
+        vibrate(VibrationEffect.createOneShot(TICK_MS, TICK_AMPLITUDE))
+    }
+
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -43,18 +47,23 @@ class RestTimerService : Service() {
 
         startInForeground()
 
-        handler.removeCallbacks(buzz)
+        handler.removeCallbacksAndMessages(null)
         releaseWakeLock()
         wakeLock = getSystemService(PowerManager::class.java)
             .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "cronorep:rest")
             .apply { acquire(delayMs + 10_000L) }
+        // Soft ticks in the last 3 seconds, then the strong vibration.
+        for (secondsLeft in 1..WARNING_TICKS) {
+            val tickAt = delayMs - secondsLeft * 1000L
+            if (tickAt > 0) handler.postDelayed(warningTick, tickAt)
+        }
         handler.postDelayed(buzz, delayMs)
 
         return START_NOT_STICKY
     }
 
     override fun onDestroy() {
-        handler.removeCallbacks(buzz)
+        handler.removeCallbacksAndMessages(null)
         releaseWakeLock()
         super.onDestroy()
     }
@@ -87,21 +96,26 @@ class RestTimerService : Service() {
     }
 
     private fun vibrateRestOver() {
+        vibrate(VibrationEffect.createWaveform(longArrayOf(0, 400, 150, 400, 150, 700), -1))
+    }
+
+    private fun vibrate(effect: VibrationEffect) {
         // Alarm usage lets the vibration play when the app is not on screen.
         val attributes = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_ALARM)
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
             .build()
-        val pattern = longArrayOf(0, 400, 150, 400, 150, 700)
         @Suppress("DEPRECATION")
-        getSystemService(Vibrator::class.java)
-            .vibrate(VibrationEffect.createWaveform(pattern, -1), attributes)
+        getSystemService(Vibrator::class.java).vibrate(effect, attributes)
     }
 
     companion object {
         private const val CHANNEL_ID = "rest_timer"
         private const val NOTIFICATION_ID = 1
         private const val EXTRA_DELAY_MS = "delay_ms"
+        private const val WARNING_TICKS = 3
+        private const val TICK_MS = 30L
+        private const val TICK_AMPLITUDE = 70 // of 255: soft
 
         fun start(context: Context, delayMs: Long) {
             context.startForegroundService(

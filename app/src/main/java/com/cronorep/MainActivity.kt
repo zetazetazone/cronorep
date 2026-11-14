@@ -1,0 +1,185 @@
+package com.cronorep
+
+import android.os.Bundle
+import android.os.SystemClock
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.view.WindowManager
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.wear.compose.material.Button
+import androidx.wear.compose.material.ButtonDefaults
+import androidx.wear.compose.material.CircularProgressIndicator
+import androidx.wear.compose.material.MaterialTheme
+import androidx.wear.compose.material.Text
+import kotlinx.coroutines.delay
+
+private val Green = Color(0xFF4ADE80)
+private val Orange = Color(0xFFFB923C)
+private val Dim = Color(0xFF9CA3AF)
+
+class MainActivity : ComponentActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // The screen stays on, so one tap always restarts the timer.
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        RestTimer.load(this)
+
+        setContent {
+            MaterialTheme {
+                var showSettings by rememberSaveable { mutableStateOf(false) }
+                if (showSettings) {
+                    BackHandler { showSettings = false }
+                    SettingsScreen(onDone = { showSettings = false })
+                } else {
+                    TimerScreen(
+                        onTap = ::restartTimer,
+                        onLongPress = { showSettings = true },
+                    )
+                }
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        if (isFinishing) {
+            RestTimerService.stop(this)
+            RestTimer.startedAt = 0L
+        }
+        super.onDestroy()
+    }
+
+    private fun restartTimer() {
+        RestTimer.runSeconds = RestTimer.restSeconds
+        RestTimer.startedAt = SystemClock.elapsedRealtime()
+        RestTimerService.start(this, RestTimer.runSeconds * 1000L)
+        // Short tick: the tap worked.
+        getSystemService(Vibrator::class.java)
+            .vibrate(VibrationEffect.createOneShot(40, VibrationEffect.DEFAULT_AMPLITUDE))
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun TimerScreen(onTap: () -> Unit, onLongPress: () -> Unit) {
+    val startedAt = RestTimer.startedAt
+    var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
+
+    LaunchedEffect(startedAt) {
+        while (startedAt != 0L) {
+            now = SystemClock.elapsedRealtime()
+            delay(100)
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+            .combinedClickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onTap,
+                onLongClick = onLongPress,
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (startedAt == 0L) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text("TAP TO START", color = Green, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Spacer(Modifier.height(6.dp))
+                Text(formatTime(RestTimer.restSeconds.toLong()), color = Color.White, fontSize = 44.sp)
+                Spacer(Modifier.height(6.dp))
+                Text("Hold to set time", color = Dim, fontSize = 12.sp)
+            }
+        } else {
+            val totalMs = RestTimer.runSeconds * 1000L
+            val elapsedMs = (now - startedAt).coerceAtLeast(0L)
+            val resting = elapsedMs < totalMs
+
+            CircularProgressIndicator(
+                progress = if (resting) 1f - elapsedMs.toFloat() / totalMs else 1f,
+                modifier = Modifier.fillMaxSize().padding(4.dp),
+                indicatorColor = if (resting) Green else Orange,
+                trackColor = Color(0xFF1F2937),
+                strokeWidth = 6.dp,
+            )
+
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                if (resting) {
+                    val remainingSeconds = (totalMs - elapsedMs + 999) / 1000
+                    Text("REST", color = Green, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(formatTime(remainingSeconds), color = Color.White, fontSize = 60.sp)
+                } else {
+                    Text("GO", color = Orange, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text("+" + formatTime((elapsedMs - totalMs) / 1000), color = Orange, fontSize = 52.sp)
+                }
+                Text("total " + formatTime(elapsedMs / 1000), color = Dim, fontSize = 13.sp)
+            }
+        }
+    }
+}
+
+@Composable
+private fun SettingsScreen(onDone: () -> Unit) {
+    val context = LocalContext.current
+    Column(
+        modifier = Modifier.fillMaxSize().background(Color.Black),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Text("Rest time", color = Dim, fontSize = 13.sp)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Button(
+                onClick = { RestTimer.changeRest(context, -RestTimer.STEP_SECONDS) },
+                colors = ButtonDefaults.secondaryButtonColors(),
+            ) { Text("-", fontSize = 26.sp) }
+            Text(
+                formatTime(RestTimer.restSeconds.toLong()),
+                color = Color.White,
+                fontSize = 34.sp,
+                modifier = Modifier.padding(horizontal = 8.dp),
+            )
+            Button(
+                onClick = { RestTimer.changeRest(context, RestTimer.STEP_SECONDS) },
+                colors = ButtonDefaults.secondaryButtonColors(),
+            ) { Text("+", fontSize = 26.sp) }
+        }
+        Spacer(Modifier.height(8.dp))
+        Button(
+            onClick = onDone,
+            modifier = Modifier.width(90.dp).height(40.dp),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Green, contentColor = Color.Black),
+        ) { Text("OK", fontWeight = FontWeight.Bold) }
+    }
+}

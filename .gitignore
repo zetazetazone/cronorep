@@ -17,3 +17,7 @@ apple/Watch/Info.plist
 # local cook run state (renders, harness deps)
 cook/
 cook-archive/
+
+# local worktrees and agent scratch files
+.worktrees/
+.superpowers/

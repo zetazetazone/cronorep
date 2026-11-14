@@ -86,7 +86,7 @@ vibration at the end. Record one video for the phone app and one for the watch a
 - Data type: App activity → Other actions (the used free trial time).
   - Collected, not shared. Required. Purpose: App functionality, Fraud prevention.
 - Data is encrypted in transit: Yes (HTTPS).
-- Users can ask for deletion: Yes, by email to the developer address.
+- Users can ask for deletion: Yes, by email to the developer address, with the Trial code shown in the app settings.
 - The app has no account, analytics or ads SDK.
 - Google Play Billing is handled by Google.
 - GIF downloads go from the watch or the phone to GIPHY. The developer receives no data.

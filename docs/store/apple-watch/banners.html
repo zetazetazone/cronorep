@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CronoRep Store Banners</title>
+<!-- Source for the App Store "Header" (3840x1646) and "Search Results" (3840x2560) assets.
+     Render with render-banners.mjs. Add ?guide to show the safe areas. -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,700;14..32,800&display=block" rel="stylesheet">
+<style>
+  :root {
+    --green: rgb(74 222 128);
+    --orange: rgb(250 145 61);
+    --dim: rgb(156 163 176);
+    --ink: rgb(8 10 13);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--ink); }
+  body {
+    overflow: hidden; color: #fff;
+    font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased;
+    font-feature-settings: "tnum" 1, "cv11" 1;
+  }
+  .art { position: relative; overflow: hidden; display: none; isolation: isolate; background: var(--ink); }
+  .art.on { display: block; }
+  #header { width: 3840px; height: 1646px; }
+  #search { width: 3840px; height: 2560px; }
+
+  /* Soft light pools behind the rings, made from the ring colors */
+  .wash { position: absolute; inset: 0; z-index: -2; }
+
+  /* One watch-face ring: a UI layer plus an aria-hidden blurred copy as its glow */
+  .face { position: absolute; transform: translate(-50%, -50%); }
+  .face .ui, .face .glow { position: absolute; inset: 0; }
+  .face .glow { z-index: -1; filter: blur(70px) saturate(1.8); transform: scale(1.08); opacity: 0.6; }
+  .face svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .face .center {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .face .label { font-weight: 700; letter-spacing: 0.01em; }
+  .face .big { font-weight: 400; line-height: 1; letter-spacing: -0.03em; }
+  .face .small { color: var(--dim); }
+  .g { color: var(--green); }
+  .o { color: var(--orange); }
+  .side { opacity: 0.55; }
+
+  /* Search results copy */
+  .copy { position: absolute; }
+  .copy h1 { font-weight: 800; letter-spacing: -0.035em; line-height: 1.02; }
+  .copy p { color: var(--dim); font-weight: 500; letter-spacing: -0.01em; }
+
+  /* Safe-area guide, only with ?guide */
+  .guide { position: absolute; outline: 4px dashed rgb(255 0 80); display: none; z-index: 9; }
+  body.show-guide .guide { display: block; }
+</style>
+</head>
+<body>
+
+<!-- HEADER 3840x1646. ASC preview: iPhone shows ~x 320-3520 (full height), iPad landscape crops to ~y 250-1400. -->
+<section class="art" id="header">
+  <div class="wash" style="background:
+    radial-gradient(1300px 900px at 1920px 823px, rgb(74 222 128 / 0.16), transparent 70%),
+    radial-gradient(1000px 800px at 3080px 823px, rgb(250 145 61 / 0.12), transparent 70%),
+    radial-gradient(1000px 800px at 760px 823px, rgb(74 222 128 / 0.07), transparent 70%);"></div>
+
+  <div class="face side" data-ring="track" data-frac="0" style="left:760px; top:823px; width:880px; height:880px;">
+    <div class="center">
+      <div class="label g" style="font-size:66px">TAP TO START</div>
+      <div class="big" style="font-size:232px; margin:20px 0 26px">1:30</div>
+      <div class="small" style="font-size:54px">Hold to set time</div>
+    </div>
+  </div>
+
+  <div class="face" data-ring="green" data-frac="0.91" style="left:1920px; top:823px; width:1100px; height:1100px;">
+    <div class="center">
+      <div class="label g" style="font-size:78px">REST</div>
+      <div class="big" style="font-size:300px; margin:16px 0 30px">1:22</div>
+      <div class="small" style="font-size:68px">total 0:08</div>
+    </div>
+  </div>
+
+  <div class="face side" data-ring="orange" data-frac="1" style="left:3080px; top:823px; width:880px; height:880px;">
+    <div class="center">
+      <div class="label o" style="font-size:66px">GO</div>
+      <div class="big o" style="font-size:224px; margin:16px 0 26px">+0:14</div>
+      <div class="small" style="font-size:54px">total 1:44</div>
+    </div>
+  </div>
+
+  <div class="guide" style="left:1097px; top:493px; width:1646px; height:661px"></div>
+</section>
+
+<!-- SEARCH RESULTS 3840x2560. ASC preview shows the whole image small, so fill the frame. -->
+<section class="art" id="search">
+  <div class="wash" style="background:
+    radial-gradient(1800px 1500px at 2900px 1280px, rgb(74 222 128 / 0.15), transparent 70%),
+    radial-gradient(1400px 900px at 1300px 1280px, rgb(255 255 255 / 0.03), transparent 70%);"></div>
+
+  <div class="copy" style="left:250px; top:1280px; transform: translateY(-50%); width:1800px">
+    <h1 style="font-size:226px">Gym rest timer<br>on your <span class="g">wrist.</span></h1>
+    <p style="font-size:100px; margin-top:80px; line-height:1.25">One tap to start.<br>A buzz when it's time to lift.</p>
+  </div>
+
+  <div class="face" data-ring="green" data-frac="0.91" style="left:2900px; top:1280px; width:1720px; height:1720px;">
+    <div class="center">
+      <div class="label g" style="font-size:122px">REST</div>
+      <div class="big" style="font-size:470px; margin:28px 0 46px">1:22</div>
+      <div class="small" style="font-size:106px">total 0:08</div>
+    </div>
+  </div>
+
+  <div class="guide" style="left:836px; top:765px; width:2168px; height:1030px"></div>
+</section>
+
+<script>
+  const q = new URLSearchParams(location.search);
+  document.getElementById(q.get('a') || 'header').classList.add('on');
+  if (q.has('guide')) document.body.classList.add('show-guide');
+
+  const colors = { green: 'rgb(74 222 128)', orange: 'rgb(250 145 61)' };
+  // Same proportions as the watch: 6 pt stroke on a ~186 pt face.
+  function ringSvg(kind, frac) {
+    const C = 500, SW = 32, R = C - SW / 2 - 2, L = 2 * Math.PI * R;
+    const track = `<circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="rgb(255 255 255 / 0.12)" stroke-width="${SW}"/>`;
+    const arc = kind in colors
+      ? `<circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="${colors[kind]}" stroke-width="${SW}"
+           stroke-linecap="round" stroke-dasharray="${L * frac} ${L}" transform="rotate(-90 ${C} ${C})"/>`
+      : '';
+    return `<svg viewBox="0 0 1000 1000">${track}${arc}</svg>`;
+  }
+
+  document.querySelectorAll('.art.on .face').forEach(face => {
+    const center = face.querySelector('.center');
+    const ui = document.createElement('div');
+    ui.className = 'ui';
+    ui.innerHTML = ringSvg(face.dataset.ring, parseFloat(face.dataset.frac));
+    ui.appendChild(center);
+    face.appendChild(ui);
+    const glow = ui.cloneNode(true);
+    glow.className = 'glow';
+    glow.setAttribute('aria-hidden', 'true');
+    face.prepend(glow);
+  });
+</script>
+</body>
+</html>

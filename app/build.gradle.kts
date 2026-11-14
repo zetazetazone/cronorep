@@ -7,12 +7,6 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-// Keys stay in local.properties. Git does not track that file.
-val localProperties = Properties().apply {
-    val file = rootProject.file("local.properties")
-    if (file.exists()) file.inputStream().use { load(it) }
-}
-
 // Upload key for Google Play. Git does not track keystore.properties or the .jks file.
 val keystoreProperties = Properties().apply {
     val file = rootProject.file("keystore.properties")
@@ -29,11 +23,6 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0.0"
-        buildConfigField(
-            "String",
-            "GIPHY_API_KEY",
-            "\"${localProperties.getProperty("GIPHY_API_KEY", "")}\"",
-        )
     }
 
     signingConfigs {

@@ -79,9 +79,7 @@ class MainActivity : ComponentActivity() {
                     BackHandler { showSettings = false }
                     SettingsScreen(
                         onDone = { showSettings = false },
-                        onGifToggle = {
-                            if (gifsAllowed()) Gifs.toggle(this) else showPaywall = true
-                        },
+                        onGifToggle = { Gifs.toggle(this) },
                     )
                 } else {
                     TimerScreen(
@@ -101,9 +99,6 @@ class MainActivity : ComponentActivity() {
 
     /** Test builds never lock, so development is not blocked. */
     private fun isLocked() = !Billing.unlocked && Trial.expired && !BuildConfig.DEBUG
-
-    /** GIF backgrounds are a paid feature. Test builds have it for development. */
-    private fun gifsAllowed() = Billing.unlocked || BuildConfig.DEBUG
 
     override fun onResume() {
         super.onResume()
@@ -129,7 +124,7 @@ class MainActivity : ComponentActivity() {
         RestTimer.startedAt = SystemClock.elapsedRealtime()
         RestTimerService.start(this, RestTimer.runSeconds * 1000L)
         Trial.startCounting()
-        if (Gifs.enabled && gifsAllowed()) Gifs.loadNext()
+        if (Gifs.enabled) Gifs.showNext()
         // Short tick: the tap worked.
         getSystemService(Vibrator::class.java)
             .vibrate(VibrationEffect.createOneShot(40, VibrationEffect.DEFAULT_AMPLITUDE))
@@ -174,16 +169,7 @@ private fun TimerScreen(onTap: () -> Unit, onLongPress: () -> Unit) {
             val elapsedMs = (now - startedAt).coerceAtLeast(0L)
             val resting = elapsedMs < totalMs
 
-            Gifs.currentUrl?.let { gifUrl ->
-                GifBackground(gifUrl)
-                // GIPHY rule: show this mark where their GIFs show.
-                Text(
-                    "Powered by GIPHY",
-                    color = Color.White,
-                    fontSize = 8.sp,
-                    modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 16.dp),
-                )
-            }
+            Gifs.currentUrl?.let { gifUrl -> GifBackground(gifUrl) }
 
             CircularProgressIndicator(
                 progress = if (resting) 1f - elapsedMs.toFloat() / totalMs else 1f,
@@ -322,8 +308,7 @@ private fun PaywallScreen(onUnlock: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        // The GIF button also opens this screen during the trial.
-        Text(if (Trial.expired) "Free trial ended" else "Paid feature", color = Orange, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        Text("Free trial ended", color = Orange, fontSize = 16.sp, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(4.dp))
         Text(
             "Pay one time.\nUse it forever.",

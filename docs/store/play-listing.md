@@ -32,8 +32,8 @@ FREE TRIAL AND PRICE
 • After the 10 hours, the timer needs a one-time payment to unlock.
 • Pay one time. Use it forever. No subscription. No ads.
 
-EXTRA WITH THE UNLOCK
-• Optional animated gym GIF backgrounds, powered by GIPHY. This needs an internet connection.
+GIF BACKGROUNDS
+• Optional animated gym GIF backgrounds from GIPHY. They are free. They need an internet connection.
 
 PRIVACY
 • No account. No analytics. No ads. Your settings stay on your watch.

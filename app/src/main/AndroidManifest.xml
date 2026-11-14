@@ -3,7 +3,7 @@
 
     <uses-feature android:name="android.hardware.type.watch" />
 
-    <!-- Only for the optional GIPHY backgrounds and Google Play Billing. -->
+    <!-- Only for the optional GIF backgrounds and Google Play Billing. -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />

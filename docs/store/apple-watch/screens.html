@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CronoRep Watch Shots</title>
+<!-- Source for the Apple Watch App Store screenshots. Render with render.mjs. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,700;14..32,800&display=block" rel="stylesheet">
+<style>
+  :root {
+    /* Same colors as apple/Watch/CronoRepApp.swift */
+    --green: rgb(74 222 128);
+    --orange: rgb(250 145 61);
+    --dim: rgb(156 163 176);
+    --track: rgb(255 255 255 / 0.12);
+    --w: 422px;
+    --h: 514px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #000; }
+  body {
+    width: var(--w); height: var(--h); overflow: hidden;
+    font-family: Inter, system-ui, sans-serif;
+    color: #fff; -webkit-font-smoothing: antialiased;
+    font-feature-settings: "tnum" 1, "cv11" 1;
+  }
+  .shot { position: relative; width: var(--w); height: var(--h); display: none; isolation: isolate; }
+  .shot.on { display: block; }
+
+  /* Caption band */
+  .cap {
+    position: absolute; top: 26px; left: 0; right: 0;
+    text-align: center; font-weight: 800; font-size: 31px; line-height: 1.12;
+    letter-spacing: -0.02em;
+  }
+  .g { color: var(--green); }
+  .o { color: var(--orange); }
+
+  /* Watch UI stage, below the caption */
+  .stage {
+    position: absolute; left: 50%; top: 122px; width: 372px; height: 372px;
+    transform: translateX(-50%);
+  }
+  .ui { position: absolute; inset: 0; }
+  /* Glow: a blurred copy of the UI itself, behind it */
+  .glow {
+    position: absolute; inset: 0; z-index: -1;
+    filter: blur(26px) saturate(1.8); transform: scale(1.07); opacity: 0.55;
+  }
+  .ring { position: absolute; inset: 0; }
+  .center {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .label { font-size: 26px; font-weight: 700; letter-spacing: 0.01em; }
+  .big { font-size: 96px; font-weight: 400; line-height: 1; letter-spacing: -0.03em; margin: 6px 0 10px; }
+  .big.go { font-size: 86px; }
+  .small { font-size: 22px; color: var(--dim); }
+
+  /* Idle screen */
+  .idle .label { font-size: 28px; }
+  .idle .big { font-size: 80px; margin: 10px 0 14px; }
+
+  /* Settings screen */
+  .settings { position: absolute; left: 22px; right: 22px; top: 116px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .settings .trial { font-size: 17px; margin: -2px 0; }
+  .settings .hint { font-size: 19px; color: var(--dim); }
+  .stepper { display: flex; align-items: center; width: 100%; gap: 10px; }
+  .btn {
+    height: 54px; border-radius: 27px; background: rgb(255 255 255 / 0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; font-weight: 500;
+  }
+  .btn.round { width: 74px; font-size: 32px; font-weight: 400; }
+  .btn.tint { background: rgb(74 222 128 / 0.32); color: #fff; }
+  .stepper .val { flex: 1; text-align: center; font-size: 52px; letter-spacing: -0.02em; }
+  .ok { width: 100%; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <!-- Ring template: r=178 inside a 372 box, stroke 12 (6 pt @2x) -->
+  </defs>
+</svg>
+
+<!-- 1. Rest running -->
+<section class="shot" data-s="1">
+  <h1 class="cap">Tap once.<br><span class="g">Rest</span> starts.</h1>
+  <div class="stage" data-ring="green" data-frac="0.91">
+    <div class="center">
+      <div class="label g">REST</div>
+      <div class="big">1:22</div>
+      <div class="small">total 0:08</div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Last seconds -->
+<section class="shot" data-s="2">
+  <h1 class="cap">Soft ticks at<br><span class="g">3, 2, 1.</span></h1>
+  <div class="stage" data-ring="green" data-frac="0.034">
+    <div class="center">
+      <div class="label g">REST</div>
+      <div class="big">0:03</div>
+      <div class="small">total 1:27</div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Go -->
+<section class="shot" data-s="3">
+  <h1 class="cap">Buzz at zero.<br><span class="o">Go lift.</span></h1>
+  <div class="stage" data-ring="orange" data-frac="1">
+    <div class="center">
+      <div class="label o">GO</div>
+      <div class="big go o">+0:14</div>
+      <div class="small">total 1:44</div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. Idle -->
+<section class="shot idle" data-s="4">
+  <h1 class="cap">No menus.<br>Just <span class="g">tap.</span></h1>
+  <div class="stage" data-ring="none">
+    <div class="center">
+      <div class="label g">TAP TO START</div>
+      <div class="big">1:30</div>
+      <div class="small">Hold to set time</div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Settings -->
+<section class="shot" data-s="5">
+  <h1 class="cap">Hold to set<br>your <span class="g">rest.</span></h1>
+  <div class="settings">
+    <div class="hint">Rest time</div>
+    <div class="stepper">
+      <div class="btn round">−</div>
+      <div class="val">1:30</div>
+      <div class="btn round">+</div>
+    </div>
+    <div class="btn tint ok">OK</div>
+    <div class="hint trial">Free trial: 9 h 40 min left</div>
+    <div class="grid">
+      <div class="btn">0:30</div>
+      <div class="btn">1:00</div>
+      <div class="btn tint">1:30</div>
+      <div class="btn">2:00</div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const s = new URLSearchParams(location.search).get('s') || '1';
+  const shot = document.querySelector(`.shot[data-s="${s}"]`);
+  shot.classList.add('on');
+
+  const colors = { green: 'rgb(74 222 128)', orange: 'rgb(250 145 61)' };
+  const C = 186, R = 178, SW = 12, L = 2 * Math.PI * R;
+
+  function ringSvg(kind, frac) {
+    const track = `<circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="rgb(255 255 255 / 0.12)" stroke-width="${SW}"/>`;
+    if (kind === 'none') return '';
+    const on = L * frac;
+    const arc = `<circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="${colors[kind]}" stroke-width="${SW}"
+      stroke-linecap="round" stroke-dasharray="${on} ${L}" transform="rotate(-90 ${C} ${C})"/>`;
+    return `<svg class="ring" viewBox="0 0 372 372">${track}${arc}</svg>`;
+  }
+
+  // Build the UI, then a second aria-hidden copy of it as the glow layer.
+  shot.querySelectorAll('.stage').forEach(stage => {
+    const center = stage.querySelector('.center');
+    const ui = document.createElement('div');
+    ui.className = 'ui';
+    ui.innerHTML = ringSvg(stage.dataset.ring, parseFloat(stage.dataset.frac || '0'));
+    ui.appendChild(center);
+    stage.appendChild(ui);
+    const glow = ui.cloneNode(true);
+    glow.className = 'ui glow';
+    glow.setAttribute('aria-hidden', 'true');
+    stage.prepend(glow);
+  });
+</script>
+</body>
+</html>

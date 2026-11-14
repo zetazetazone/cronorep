@@ -1,0 +1,12 @@
+{
+  "name": "cronorep-waitlist-api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild index.mjs --bundle --minify --platform=node --target=node24 --format=esm --outfile=dist/index.mjs"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "esbuild": "^0.24.2"
+  }
+}

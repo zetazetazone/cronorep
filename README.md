@@ -24,8 +24,8 @@ Tap anywhere. Rest. Feel the buzz.
 ## Why
 
 Between sets you want one thing: know when to go again.
-Phone timers need unlocking, small buttons and your attention.
-CronoRep needs **one tap anywhere on the watch**. Your wrist tells you when to lift.
+Most timer apps need small buttons, menus and your attention.
+CronoRep needs **one tap anywhere on the screen**. Your watch or phone tells you when to lift.
 
 ## What it does
 

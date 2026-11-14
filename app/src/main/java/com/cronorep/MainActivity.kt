@@ -34,6 +34,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -67,7 +68,7 @@ class MainActivity : ComponentActivity() {
         RestTimer.load(this)
         Trial.load(this)
         Billing.init(this)
-        Gifs.load(this)
+        Look.load(this)
         // Debug only: adb shell am start -n com.cronorep/.MainActivity --ez paywall true
         val previewPaywall = BuildConfig.DEBUG && intent.getBooleanExtra("paywall", false)
 
@@ -80,10 +81,7 @@ class MainActivity : ComponentActivity() {
                     PaywallScreen(onUnlock = { Billing.buy(this) })
                 } else if (showSettings) {
                     BackHandler { showSettings = false }
-                    SettingsScreen(
-                        onDone = { showSettings = false },
-                        onGifToggle = { Gifs.toggle(this) },
-                    )
+                    SettingsScreen(onDone = { showSettings = false })
                 } else {
                     TimerScreen(
                         onTap = {
@@ -127,7 +125,7 @@ class MainActivity : ComponentActivity() {
         RestTimer.startedAt = SystemClock.elapsedRealtime()
         RestTimerService.start(this, RestTimer.runSeconds * 1000L)
         Trial.startCounting()
-        if (Gifs.enabled) Gifs.showNext()
+        Look.onTimerStart()
         // Short tick: the tap worked.
         getSystemService(Vibrator::class.java)
             .vibrate(VibrationEffect.createOneShot(40, VibrationEffect.DEFAULT_AMPLITUDE))
@@ -138,12 +136,14 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun TimerScreen(onTap: () -> Unit, onLongPress: () -> Unit) {
     val startedAt = RestTimer.startedAt
+    val look = Look.settings
     var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
 
-    LaunchedEffect(startedAt) {
+    LaunchedEffect(startedAt, look.saveBattery) {
         while (startedAt != 0L) {
             now = SystemClock.elapsedRealtime()
-            delay(100)
+            // Save battery mode: one screen update each second.
+            delay(if (look.saveBattery) 1000L else 100L)
         }
     }
 
@@ -160,7 +160,11 @@ private fun TimerScreen(onTap: () -> Unit, onLongPress: () -> Unit) {
         contentAlignment = Alignment.Center,
     ) {
         // Behind the idle screen and the running timer.
-        Gifs.currentUrl?.let { gifUrl -> GifBackground(gifUrl) }
+        when (look.effectiveBackground) {
+            BackgroundKind.GRADIENT -> GradientBackground(Gradients.ALL[look.gradientId])
+            BackgroundKind.GIF_RANDOM, BackgroundKind.GIF_FIXED -> Look.gifUrl?.let { GifBackground(it) }
+            BackgroundKind.BLACK -> Unit
+        }
 
         if (startedAt == 0L) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -175,13 +179,15 @@ private fun TimerScreen(onTap: () -> Unit, onLongPress: () -> Unit) {
             val elapsedMs = (now - startedAt).coerceAtLeast(0L)
             val resting = elapsedMs < totalMs
 
-            CircularProgressIndicator(
-                progress = if (resting) 1f - elapsedMs.toFloat() / totalMs else 1f,
-                modifier = Modifier.fillMaxSize().padding(4.dp),
-                indicatorColor = if (resting) Green else Orange,
-                trackColor = Color(0xFF1F2937),
-                strokeWidth = 6.dp,
-            )
+            if (!look.minimalist) {
+                CircularProgressIndicator(
+                    progress = if (resting) 1f - elapsedMs.toFloat() / totalMs else 1f,
+                    modifier = Modifier.fillMaxSize().padding(4.dp),
+                    indicatorColor = if (resting) Green else Orange,
+                    trackColor = Color(0xFF1F2937),
+                    strokeWidth = 6.dp,
+                )
+            }
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 if (resting) {
@@ -192,7 +198,9 @@ private fun TimerScreen(onTap: () -> Unit, onLongPress: () -> Unit) {
                     Text("GO", color = Orange, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     Text("+" + formatTime((elapsedMs - totalMs) / 1000), color = Orange, fontSize = 52.sp)
                 }
-                Text("total " + formatTime(elapsedMs / 1000), color = Dim, fontSize = 13.sp)
+                if (!look.minimalist) {
+                    Text("total " + formatTime(elapsedMs / 1000), color = Dim, fontSize = 13.sp)
+                }
             }
         }
     }
@@ -214,17 +222,31 @@ private fun GifBackground(url: String) {
         contentScale = ContentScale.Crop,
         modifier = Modifier.fillMaxSize(),
     )
-    // Dark layer: the timer text must stay easy to read.
+    DarkLayer()
+}
+
+@Composable
+private fun GradientBackground(gradient: Gradient) {
+    Box(
+        Modifier.fillMaxSize()
+            .background(Brush.verticalGradient(listOf(Color(gradient.top), Color(gradient.bottom))))
+    )
+    DarkLayer()
+}
+
+/** The timer text must stay easy to read on each background. */
+@Composable
+private fun DarkLayer() {
     Box(Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.55f)))
 }
 
 @Composable
-private fun SettingsScreen(onDone: () -> Unit, onGifToggle: () -> Unit) {
+private fun SettingsScreen(onDone: () -> Unit) {
     val context = LocalContext.current
-    // Page 0: the +/- control. Page 1 (swipe): the preset bubbles.
+    // Page 0: the +/- control. Page 1 (swipe): the preset bubbles. Page 2: the look.
     // Each page fills the screen, so its content is always in the center.
     VerticalPager(
-        state = rememberPagerState(pageCount = { 2 }),
+        state = rememberPagerState(pageCount = { 3 }),
         modifier = Modifier.fillMaxSize().background(Color.Black),
     ) { page ->
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -265,24 +287,8 @@ private fun SettingsScreen(onDone: () -> Unit, onGifToggle: () -> Unit) {
                         color = Dim,
                         fontSize = 11.sp,
                     )
-                    Spacer(Modifier.height(5.dp))
-                    Button(
-                        onClick = onGifToggle,
-                        modifier = Modifier.width(84.dp).height(30.dp),
-                        colors = if (Gifs.enabled) {
-                            ButtonDefaults.buttonColors(backgroundColor = Orange, contentColor = Color.Black)
-                        } else {
-                            ButtonDefaults.secondaryButtonColors()
-                        },
-                    ) {
-                        Text(
-                            if (Gifs.enabled) "GIF on" else "GIF off",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
                 }
-            } else {
+            } else if (page == 1) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     RestTimer.PRESETS_SECONDS.chunked(2).forEach { rowPresets ->
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -299,9 +305,51 @@ private fun SettingsScreen(onDone: () -> Unit, onGifToggle: () -> Unit) {
                         }
                     }
                 }
+            } else {
+                LookPage()
             }
         }
     }
+}
+
+@Composable
+private fun LookPage() {
+    val context = LocalContext.current
+    val look = Look.settings
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(5.dp),
+    ) {
+        Text("Look", color = Dim, fontSize = 13.sp)
+        LookButton(if (look.minimalist) "Minimal on" else "Minimal off", look.minimalist) {
+            Look.update(context, look.copy(minimalist = !look.minimalist))
+        }
+        LookButton(if (look.saveBattery) "Battery on" else "Battery off", look.saveBattery) {
+            Look.update(context, look.copy(saveBattery = !look.saveBattery))
+        }
+        val backgroundName = when (look.background) {
+            BackgroundKind.BLACK -> "Black"
+            BackgroundKind.GRADIENT -> "Colour"
+            BackgroundKind.GIF_RANDOM -> "GIF"
+            BackgroundKind.GIF_FIXED -> "My GIF"
+        }
+        LookButton("Back: $backgroundName", look.background != BackgroundKind.BLACK) {
+            Look.update(context, look.withNextBackground())
+        }
+    }
+}
+
+@Composable
+private fun LookButton(label: String, active: Boolean, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier.width(120.dp).height(32.dp),
+        colors = if (active) {
+            ButtonDefaults.buttonColors(backgroundColor = Orange, contentColor = Color.Black)
+        } else {
+            ButtonDefaults.secondaryButtonColors()
+        },
+    ) { Text(label, fontSize = 12.sp, fontWeight = FontWeight.Bold) }
 }
 
 @Composable

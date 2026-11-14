@@ -38,7 +38,11 @@ final class RestTimer: NSObject, ObservableObject, UNUserNotificationCenterDeleg
         let rest = saved == 0 ? 90 : min(max(saved, Self.minRest), Self.maxRest)
         restSeconds = rest
         runSeconds = rest
-        trialUsed = UserDefaults.standard.double(forKey: Keys.trialUsed)
+        // The bigger value wins: the Keychain survives a new install, and old
+        // versions saved only to UserDefaults.
+        let used = max(TrialKeychain.read() ?? 0, UserDefaults.standard.double(forKey: Keys.trialUsed))
+        trialUsed = used
+        TrialKeychain.write(used)
         super.init()
         UNUserNotificationCenter.current().delegate = self
     }
@@ -164,5 +168,6 @@ final class RestTimer: NSObject, ObservableObject, UNUserNotificationCenterDeleg
         trialUsed += now.timeIntervalSince(since)
         countingSince = now
         defaults.set(trialUsed, forKey: Keys.trialUsed)
+        TrialKeychain.write(trialUsed)
     }
 }

@@ -29,16 +29,26 @@
 
   /* Caption band */
   .cap {
-    position: absolute; top: 26px; left: 0; right: 0;
-    text-align: center; font-weight: 800; font-size: 31px; line-height: 1.12;
-    letter-spacing: -0.02em;
+    position: absolute; top: 58px; left: 30px; right: 20px;
+    font-weight: 800; font-size: 34px; line-height: 1.08; letter-spacing: -0.025em;
   }
+  .eyebrow {
+    position: absolute; top: 28px; left: 30px; display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.14em; color: var(--green);
+  }
+  .eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .eyebrow.o { color: var(--orange); }
+  .brand { position: absolute; top: 22px; left: 30px; display: flex; align-items: center; gap: 9px;
+    font-size: 19px; font-weight: 800; letter-spacing: -0.01em; }
+  .brand svg { width: 26px; height: 26px; }
+  /* A thin line that runs from one screenshot into the next */
+  .thread { position: absolute; inset: 0; z-index: -2; pointer-events: none; }
   .g { color: var(--green); }
   .o { color: var(--orange); }
 
   /* Watch UI stage, below the caption */
   .stage {
-    position: absolute; left: 50%; top: 122px; width: 372px; height: 372px;
+    position: absolute; left: 50%; top: 146px; width: 322px; height: 322px;
     transform: translateX(-50%);
   }
   .ui { position: absolute; inset: 0; }
@@ -52,19 +62,20 @@
     position: absolute; inset: 0; display: flex; flex-direction: column;
     align-items: center; justify-content: center;
   }
-  .label { font-size: 26px; font-weight: 700; letter-spacing: 0.01em; }
-  .big { font-size: 96px; font-weight: 400; line-height: 1; letter-spacing: -0.03em; margin: 6px 0 10px; }
-  .big.go { font-size: 86px; }
-  .small { font-size: 22px; color: var(--dim); }
+  .label { font-size: 23px; font-weight: 700; letter-spacing: 0.01em; }
+  .big { font-size: 86px; font-weight: 400; line-height: 1; letter-spacing: -0.03em; margin: 6px 0 10px; }
+  .big.go { font-size: 76px; }
+  .small { font-size: 20px; color: var(--dim); }
 
   /* Idle screen */
-  .idle .label { font-size: 28px; }
-  .idle .big { font-size: 80px; margin: 10px 0 14px; }
+  .idle .label { font-size: 25px; }
+  .idle .big { font-size: 74px; margin: 10px 0 14px; }
 
   /* Settings screen */
-  .settings { position: absolute; left: 22px; right: 22px; top: 116px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .settings { position: absolute; left: 30px; right: 30px; top: 150px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .settings .btn { height: 48px; }
   .settings .trial { font-size: 17px; margin: -2px 0; }
-  .settings .hint { font-size: 19px; color: var(--dim); }
+  .settings .hint { font-size: 17px; color: var(--dim); }
   .stepper { display: flex; align-items: center; width: 100%; gap: 10px; }
   .btn {
     height: 54px; border-radius: 27px; background: rgb(255 255 255 / 0.15);
@@ -73,7 +84,7 @@
   }
   .btn.round { width: 74px; font-size: 32px; font-weight: 400; }
   .btn.tint { background: rgb(74 222 128 / 0.32); color: #fff; }
-  .stepper .val { flex: 1; text-align: center; font-size: 52px; letter-spacing: -0.02em; }
+  .stepper .val { flex: 1; text-align: center; font-size: 46px; letter-spacing: -0.02em; }
   .ok { width: 100%; }
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
 
@@ -100,8 +111,9 @@
 </svg>
 
 <!-- 1. Rest running -->
-<section class="shot" data-s="1">
-  <h1 class="cap">Tap once.<br><span class="g">Rest</span> starts.</h1>
+<section class="shot" data-s="1" data-thread="500 486">
+  <div class="brand"><svg viewBox="0 0 256 256" aria-hidden="true"><path d="M206.79 114.11 A80 80 0 1 1 128 48" fill="none" stroke="rgb(74 222 128)" stroke-width="38" stroke-linecap="round"/><circle cx="179.42" cy="66.72" r="17" fill="rgb(74 222 128)"/></svg>CronoRep</div>
+  <h1 class="cap">Tap once.<br><span class="g">Rest starts.</span></h1>
   <div class="stage" data-ring="green" data-frac="0.91">
     <div class="center">
       <div class="label g">REST</div>
@@ -112,7 +124,8 @@
 </section>
 
 <!-- 2. Last seconds -->
-<section class="shot" data-s="2">
+<section class="shot" data-s="2" data-thread="486 498">
+  <div class="eyebrow">LAST 3 SECONDS</div>
   <h1 class="cap">Soft ticks at<br><span class="g">3, 2, 1.</span></h1>
   <div class="stage" data-ring="green" data-frac="0.034">
     <div class="center">
@@ -124,7 +137,8 @@
 </section>
 
 <!-- 3. Go -->
-<section class="shot" data-s="3">
+<section class="shot" data-s="3" data-thread="498 482">
+  <div class="eyebrow o">REST IS OVER</div>
   <h1 class="cap">Buzz at zero.<br><span class="o">Go lift.</span></h1>
   <div class="stage" data-ring="orange" data-frac="1">
     <div class="center">
@@ -136,8 +150,9 @@
 </section>
 
 <!-- 4. Idle -->
-<section class="shot idle" data-s="4">
-  <h1 class="cap">No menus.<br>Just <span class="g">tap.</span></h1>
+<section class="shot idle" data-s="4" data-thread="482 496">
+  <div class="eyebrow">ONE TAP</div>
+  <h1 class="cap">No menus.<br><span class="g">Just tap.</span></h1>
   <div class="stage" data-ring="none">
     <div class="center">
       <div class="label g">TAP TO START</div>
@@ -148,8 +163,9 @@
 </section>
 
 <!-- 5. Settings -->
-<section class="shot" data-s="5">
-  <h1 class="cap">Hold to set<br>your <span class="g">rest.</span></h1>
+<section class="shot" data-s="5" data-thread="496 500">
+  <div class="eyebrow">YOUR REST TIME</div>
+  <h1 class="cap">Hold to set<br><span class="g">your rest.</span></h1>
   <div class="settings">
     <div class="hint">Rest time</div>
     <div class="stepper">
@@ -197,6 +213,15 @@
     const arc = `<circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="${colors[kind]}" stroke-width="${SW}"
       stroke-linecap="round" stroke-dasharray="${on} ${L}" transform="rotate(-90 ${C} ${C})"/>`;
     return `<svg class="ring" viewBox="0 0 372 372">${track}${arc}</svg>`;
+  }
+
+  // The thread: enters at the left where the last shot left off, leaves where the next one starts.
+  if (shot.dataset.thread) {
+    const [y0, y1] = shot.dataset.thread.split(' ').map(Number);
+    const mid = (y0 + y1) / 2 + 8;
+    shot.insertAdjacentHTML('afterbegin', `<svg class="thread" viewBox="0 0 422 514">
+      <path d="M0 ${y0} C140 ${y0} 282 ${y1} 422 ${y1}" fill="none" stroke="rgb(74 222 128 / 0.55)" stroke-width="2"/>
+      <circle cx="211" cy="${(y0 + y1) / 2}" r="4" fill="rgb(74 222 128)"/></svg>`);
   }
 
   // Build the UI, then a second aria-hidden copy of it as the glow layer.

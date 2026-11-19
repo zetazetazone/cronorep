@@ -3,6 +3,7 @@ import SwiftUI
 struct RootView: View {
     @EnvironmentObject private var timer: RestTimer
     @EnvironmentObject private var store: Store
+    @EnvironmentObject private var look: Look
     @Environment(\.scenePhase) private var scenePhase
 
     @State private var showSettings = false
@@ -20,6 +21,7 @@ struct RootView: View {
                     showPaywall = true
                 } else {
                     timer.restart()
+                    look.timerStarted()
                 }
             }
             .onLongPressGesture(minimumDuration: 0.6) {
@@ -49,28 +51,38 @@ struct RootView: View {
 
 struct TimerView: View {
     @EnvironmentObject private var timer: RestTimer
+    @EnvironmentObject private var look: Look
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
-            if let startedAt = timer.startedAt {
-                TimelineView(.periodic(from: startedAt, by: 0.1)) { context in
-                    RunningView(
-                        elapsed: max(context.date.timeIntervalSince(startedAt), 0),
-                        total: TimeInterval(timer.runSeconds)
-                    )
-                }
-            } else {
-                VStack(spacing: 4) {
-                    Text("TAP TO START")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(Color.restGreen)
-                    Text(formatTime(timer.restSeconds))
-                        .font(.system(size: 40))
-                    Text("Hold to set time")
-                        .font(.system(size: 11))
-                        .foregroundStyle(Color.dim)
-                }
+            LookBackground()
+            content
+                .opacity(look.dim ? Look.dimOpacity : 1)
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        if let startedAt = timer.startedAt {
+            // Dim mode: one screen update each second, on the whole second since the tap,
+            // so "REST 0:01" never stays on screen after the end haptic.
+            TimelineView(.periodic(from: startedAt, by: look.dim ? 1 : 0.1)) { context in
+                RunningView(
+                    elapsed: max(context.date.timeIntervalSince(startedAt), 0),
+                    total: TimeInterval(timer.runSeconds),
+                    minimal: look.minimal
+                )
+            }
+        } else {
+            VStack(spacing: 4) {
+                Text("TAP TO START")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(Color.restGreen)
+                Text(formatTime(timer.restSeconds))
+                    .font(.system(size: 40))
+                Text("Hold to set time")
+                    .font(.system(size: 11))
+                    .foregroundStyle(Color.dim)
             }
         }
     }
@@ -80,20 +92,24 @@ struct TimerView: View {
 struct RunningView: View {
     let elapsed: TimeInterval
     let total: TimeInterval
+    /// No progress ring and no "total" line.
+    var minimal = false
 
     private var resting: Bool { elapsed < total }
 
     var body: some View {
         ZStack {
-            Circle()
-                .stroke(Color.white.opacity(0.12), lineWidth: 6)
-            Circle()
-                .trim(from: 0, to: resting ? 1 - elapsed / total : 1)
-                .stroke(
-                    resting ? Color.restGreen : Color.goOrange,
-                    style: StrokeStyle(lineWidth: 6, lineCap: .round)
-                )
-                .rotationEffect(.degrees(-90))
+            if !minimal {
+                Circle()
+                    .stroke(Color.white.opacity(0.12), lineWidth: 6)
+                Circle()
+                    .trim(from: 0, to: resting ? 1 - elapsed / total : 1)
+                    .stroke(
+                        resting ? Color.restGreen : Color.goOrange,
+                        style: StrokeStyle(lineWidth: 6, lineCap: .round)
+                    )
+                    .rotationEffect(.degrees(-90))
+            }
 
             VStack(spacing: 0) {
                 if resting {
@@ -112,9 +128,11 @@ struct RunningView: View {
                         .monospacedDigit()
                         .foregroundStyle(Color.goOrange)
                 }
-                Text("total " + formatTime(Int(elapsed)))
-                    .font(.system(size: 12))
-                    .foregroundStyle(Color.dim)
+                if !minimal {
+                    Text("total " + formatTime(Int(elapsed)))
+                        .font(.system(size: 12))
+                        .foregroundStyle(Color.dim)
+                }
             }
         }
         .padding(4)
@@ -124,6 +142,7 @@ struct RunningView: View {
 struct SettingsView: View {
     @EnvironmentObject private var timer: RestTimer
     @EnvironmentObject private var store: Store
+    @EnvironmentObject private var look: Look
     @Environment(\.dismiss) private var dismiss
     @State private var showPaywall = false
 
@@ -168,6 +187,32 @@ struct SettingsView: View {
                         .tint(seconds == timer.restSeconds ? Color.restGreen : nil)
                     }
                 }
+
+                Text("Look")
+                    .font(.system(size: 12))
+                    .foregroundStyle(Color.dim)
+                    .padding(.top, 6)
+
+                LookButton(title: look.minimal ? "Minimal on" : "Minimal off", active: look.minimal) {
+                    look.minimal.toggle()
+                }
+                LookButton(title: look.dim ? "Dim screen on" : "Dim screen off", active: look.dim) {
+                    look.dim.toggle()
+                }
+                LookButton(title: "Back: \(look.background.label)", active: look.background != .black) {
+                    look.background = look.background.next
+                }
+                if look.background == .color {
+                    LookButton(title: "Colour: \(look.gradient.name)", active: true) {
+                        look.nextGradient()
+                    }
+                }
+                if look.dim && look.background != .black {
+                    Text("Dim screen shows a black background.")
+                        .font(.system(size: 10))
+                        .foregroundStyle(Color.dim)
+                        .multilineTextAlignment(.center)
+                }
             }
             .padding(.horizontal, 4)
         }
@@ -183,6 +228,22 @@ struct SettingsView: View {
         if store.unlocked { return "Unlocked. Thank you!" }
         if timer.trialExpired { return "Free trial ended" }
         return "Free trial: \(timer.trialRemainingText) left"
+    }
+}
+
+/// A look setting. Orange = on.
+private struct LookButton: View {
+    let title: String
+    let active: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.system(size: 13, weight: .bold))
+                .foregroundStyle(active ? Color.goOrange : Color.white)
+        }
+        .tint(active ? Color.goOrange : nil)
     }
 }
 

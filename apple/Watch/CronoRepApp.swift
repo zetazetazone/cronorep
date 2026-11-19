@@ -4,12 +4,14 @@ import SwiftUI
 struct CronoRepApp: App {
     @StateObject private var timer = RestTimer()
     @StateObject private var store = Store()
+    @StateObject private var look = Look()
 
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(timer)
                 .environmentObject(store)
+                .environmentObject(look)
         }
     }
 }

@@ -27,3 +27,6 @@ cook-archive/
 trial-api/node_modules/
 trial-api/dist/
 trial-api/function.zip
+
+# Logo tool renders (made again by the build scripts)
+docs/brand/**/renders/

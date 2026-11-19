@@ -4,7 +4,7 @@ GLYPH = ('<rect x="40" y="116" width="50" height="24" rx="12"/><rect x="166" y="
          '<rect x="76" y="70" width="38" height="116" rx="19"/><rect x="142" y="70" width="38" height="116" rx="19"/>')
 # name: (edge colour, middle colour, glow colour, chrome bottom colour)
 OPTIONS = {
-    "1-navy":    ("#1A2466", "#2A3FA8", "#7EA6FF", "#C7D3EE"),
+    "1-navy":    ("#2B3C9E", "#4363DB", "#7EA6FF", "#C7D3EE"),
     "2-plum":    ("#3A1259", "#5B1F94", "#D08BFF", "#DCCBEF"),
     "3-emerald": ("#083F3A", "#0F6B5C", "#5EF2B5", "#C6E8DD"),
 }

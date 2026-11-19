@@ -41,6 +41,11 @@ HOW IT WORKS
 • Hold the screen to set the rest time in 5 second steps.
 • Quick presets: 0:30, 1:00, 1:30 and 2:00.
 
+MAKE IT YOURS
+• Minimal mode: only the time, no ring.
+• Dim screen: darker text and a black background to save battery.
+• Backgrounds: black, 6 colour gradients, or animated gym GIFs. GIFs need an internet connection.
+
 FREE TRIAL AND PRICE
 • You get 10 hours of timer use for free. The trial counts only while a rest timer runs with the app on screen.
 • After the 10 hours, unlock CronoRep with one payment.
@@ -48,6 +53,7 @@ FREE TRIAL AND PRICE
 
 PRIVACY
 • No account. No analytics. No ads. The app sends no data to us.
+• GIF backgrounds are off by default. When you turn them on, the GIFs download from GIPHY.
 
 ## What's New (version 1.0.0)
 
@@ -63,7 +69,8 @@ Answer "None" / "No" to every question. Result: 4+.
 
 ## App privacy
 
-Data Not Collected. The watch app has no network code and no third-party SDKs. The trial time stays in the watch Keychain.
+Data Not Collected. The watch app has no third-party SDKs and sends no data to us. The trial time stays in the watch Keychain.
+Its only network use: when the user turns on GIF backgrounds, it downloads GIF images from media.giphy.com. GIPHY sees the IP address only to serve the image (the privacy policy says this). No data is linked to the user or used for tracking, so this stays "Data Not Collected".
 
 ## In-app purchase: lifetime_unlock
 
@@ -85,3 +92,5 @@ Data Not Collected. The watch app has no network code and no third-party SDKs. T
 - Before the first rest, the app shows the trial length and the price one time.
 - Background mode: the app uses a WKExtendedRuntimeSession (self-care) only during a rest countdown, which is 10 minutes or less. It keeps the timer running with the wrist down so the end-of-rest haptic plays on time. The session ends when that haptic plays. A local notification is the backup if the system ends the session.
 - The app asks for notification permission at the first rest, for that backup alert.
+- Look settings are at the bottom of the settings screen: Minimal, Dim screen, and Background (Black, Colour, GIF). GIF backgrounds download gym GIFs from GIPHY and need an internet connection. Without one, the background stays black.
+- Guideline 4 (icon): the new icon has a blue background with a light glow, so it shows as a clear circle on Apple Watch.

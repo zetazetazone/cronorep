@@ -1,5 +1,5 @@
 """Writes the chosen Navy icon into the apps. Run from the repo root: python docs/brand/apple-icon/export_navy.py"""
-EDGE, MID, GLOW, CHROME = "#1A2466", "#2A3FA8", "#7EA6FF", "#C7D3EE"
+EDGE, MID, GLOW, CHROME = "#2B3C9E", "#4363DB", "#7EA6FF", "#C7D3EE"
 # The glyph on the 256 canvas: (x, y, w, h, corner radius).
 RECTS = [(40, 116, 50, 24, 12), (166, 116, 50, 24, 12), (76, 70, 38, 116, 19), (142, 70, 38, 116, 19)]
 

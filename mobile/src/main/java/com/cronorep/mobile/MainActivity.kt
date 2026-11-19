@@ -16,6 +16,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -26,6 +27,7 @@ import com.cronorep.Look
 import com.cronorep.RestTimer
 import com.cronorep.RestTimerService
 import com.cronorep.Trial
+import com.cronorep.applyDim
 import com.cronorep.TrialSync
 
 class MainActivity : ComponentActivity() {
@@ -52,6 +54,7 @@ class MainActivity : ComponentActivity() {
         val previewPaywall = BuildConfig.DEBUG && intent.getBooleanExtra("paywall", false)
 
         setContent {
+            SideEffect { applyDim(Look.settings.saveBattery) }
             MaterialTheme(
                 colorScheme = darkColorScheme(
                     primary = Green,

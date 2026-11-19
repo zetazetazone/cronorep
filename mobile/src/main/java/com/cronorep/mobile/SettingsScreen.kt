@@ -69,7 +69,7 @@ fun SettingsScreen(onDone: () -> Unit) {
     val uriHandler = LocalUriHandler.current
     val trialCode = remember { TrialSync.shortCode(context) }
     val look = Look.settings
-    // Save battery mode forces a black background, so the choices are off.
+    // Dim mode forces a black background, so the choices are off.
     val canChooseBackground = !look.saveBattery
     // The GIPHY thumbnails load only when the user asks for them.
     var showGifs by rememberSaveable { mutableStateOf(look.background == BackgroundKind.GIF_FIXED) }
@@ -144,14 +144,14 @@ fun SettingsScreen(onDone: () -> Unit) {
             }
         }
         fullRow {
-            SwitchRow("Save battery mode", "Black background. One screen update each second.", look.saveBattery) {
+            SwitchRow("Dim mode", "Darker screen and black background. Saves battery.", look.saveBattery) {
                 change(look.copy(saveBattery = it))
             }
         }
 
         fullRow { SectionTitle("Background") }
         if (look.saveBattery) {
-            fullRow { Text("Save battery mode is on. The background is black.", color = Orange, fontSize = 14.sp) }
+            fullRow { Text("Dim mode is on. The background is black.", color = Orange, fontSize = 14.sp) }
         }
         fullRow {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

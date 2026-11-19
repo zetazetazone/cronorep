@@ -35,7 +35,7 @@ FREE TRIAL AND PRICE
 
 MAKE IT YOURS
 • Minimalist mode: no progress ring, only the time.
-• Save battery mode: black background and fewer screen updates.
+• Dim mode: a darker screen and a black background to save battery.
 • Backgrounds: black, 6 colour gradients, or animated gym GIFs from GIPHY. GIFs need an internet connection.
 • Set the look in the phone app. Your watch gets the same look.
 
@@ -109,7 +109,7 @@ First version of CronoRep, the gym rest timer for your watch.
 <en-US>
 CronoRep is now on your phone.
 • The same rest timer on the phone: tap anywhere, then feel the vibration when the rest ends.
-• Set the look for your watch: minimalist mode, save battery mode and the background.
+• Set the look for your watch: minimalist mode, dim mode and the background.
 </en-US>
 
 ## Upload

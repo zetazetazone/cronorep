@@ -26,6 +26,7 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -77,6 +78,7 @@ class MainActivity : ComponentActivity() {
         val previewPaywall = BuildConfig.DEBUG && intent.getBooleanExtra("paywall", false)
 
         setContent {
+            SideEffect { applyDim(Look.settings.saveBattery) }
             MaterialTheme {
                 var showSettings by rememberSaveable { mutableStateOf(false) }
                 var showPaywall by rememberSaveable { mutableStateOf(previewPaywall) }
@@ -147,7 +149,7 @@ private fun TimerScreen(onTap: () -> Unit, onLongPress: () -> Unit) {
     LaunchedEffect(startedAt, look.saveBattery) {
         while (startedAt != 0L) {
             now = SystemClock.elapsedRealtime()
-            // Save battery mode: one screen update each second, on the whole second since the tap,
+            // Dim mode: one screen update each second, on the whole second since the tap,
             // so "REST 0:01" never stays on screen after the end vibration.
             delay(if (look.saveBattery) 1000L - (SystemClock.elapsedRealtime() - startedAt) % 1000L else 100L)
         }
@@ -359,7 +361,7 @@ private fun LookPage() {
         LookButton(if (look.minimalist) "Minimal on" else "Minimal off", look.minimalist) {
             Look.update(context, look.copy(minimalist = !look.minimalist))
         }
-        LookButton(if (look.saveBattery) "Battery on" else "Battery off", look.saveBattery) {
+        LookButton(if (look.saveBattery) "Dim on" else "Dim off", look.saveBattery) {
             Look.update(context, look.copy(saveBattery = !look.saveBattery))
         }
         val backgroundName = when (look.background) {

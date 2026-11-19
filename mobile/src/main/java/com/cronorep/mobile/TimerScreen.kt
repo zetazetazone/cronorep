@@ -60,7 +60,7 @@ fun TimerScreen(onTap: () -> Unit, onOpenSettings: () -> Unit) {
     LaunchedEffect(startedAt, look.saveBattery) {
         while (startedAt != 0L) {
             now = SystemClock.elapsedRealtime()
-            // Save battery mode: one screen update each second, on the whole second since the tap,
+            // Dim mode: one screen update each second, on the whole second since the tap,
             // so "REST 0:01" never stays on screen after the end vibration.
             delay(if (look.saveBattery) 1000L - (SystemClock.elapsedRealtime() - startedAt) % 1000L else 100L)
         }
